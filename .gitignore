@@ -1,8 +1,13 @@
+#Python
 *.pyc
 *~
 __pycache__
-env
+env/
 db.sqlite3
-/static
+/static/
+#macOS
 .DS_Store
+._*
+.fseventsd
+.Spotlight-V100
 
