@@ -1,6 +1,6 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from .models import ArticlePost,ArticleColumn
-from django.http import HttpResponse
+from django.http import HttpResponse,Http404
 from .forms import ArticlePostForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -37,6 +37,7 @@ def index(request):
   return article_list(request)
 
 def article_list(request):
+  
   search = request.GET.get('search')
   order = request.GET.get('order')
   column = request.GET.get('column')
@@ -51,16 +52,16 @@ def article_list(request):
       Q(title__icontains=search) |
       Q(body__icontains=search)
     )
-    if not articles:
-      messages.error(request,"No articles about %s" % search)
-      return redirect("article:index")
+    
   else:
     search = ''
     
   # 栏目查询集
-  if column is not None and column.isdigit():
-    articles = articles.filter(column=column)
-    
+  if column is not None:
+    if column.isdigit():
+      articles = articles.filter(column=column)
+    else:
+      raise Http404
   # 标签查询集
   if tag and tag != 'None':
     articles = articles.filter(tags__name__in=[tag])
@@ -83,7 +84,8 @@ def article_list(request):
     'tag':tag,
     'columns':columns
   }
-  
+  if not articles:
+    messages.error(request,"No articles found.")
   return render(request,'article/list.html',context)
 
 
