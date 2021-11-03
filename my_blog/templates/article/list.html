@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+
+<!-- 写入 base.html 中定义的 title -->
+{% block title %}
+    Qin's Lab
+{% endblock title %}
+
+<!-- 写入 base.html 中定义的 content -->
+{% block content %}
+
+<!-- 定义放置文章标题的div容器 -->
+<div class="container">
+    {% if user.is_authenticated %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb col-1">
+            {% if order == 'total_views' %}
+            <li class="breadcrumb-item">
+                <a href="{% url 'article:article_list' %}?search={{ search }}">
+                    <i class="far fa-clock"></i>
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <font color="grey">
+                    <i class="fas fa-book-reader"></i>
+                </font>
+            </li>
+            {% else %}
+            <li class="breadcrumb-item">
+                <i class="far fa-clock"></i>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'article:article_list' %}?order=total_views&search={{ search }}">
+                    <i class="fas fa-book-reader"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ol>
+    </nav>
+    {% endif %}
+
+    <div class="row mt-2">
+        {% for article in articles %}
+        <hr>
+        {% if article.avatar %}
+        <div class="col-3">
+            <img src="{{ article.avatar.url }}" 
+                alt="avatar" 
+                style="max-width:100%; border-radius: 20px"
+            >
+        </div>
+        {% endif %}
+        <!-- 文章内容 -->
+        <div class="col">
+            <!-- 栏目 -->
+            {% if article.column %}
+            <a role="button" href="{% url 'article:article_list' %}?column={{ article.column.id }}" 
+                class="btn btn-sm mb-2 btn-success"
+            >
+                
+                {{ article.column }}
+                
+            </a>
+            {% endif %}
+            <!-- 标题 -->
+            <h4>
+                <b>
+                    <a href="{% url 'article:article_detail' article.id %}"
+                        style="color: black;" 
+                    >
+                        {{ article.title }}
+                    </a>
+                </b>
+                
+                <!-- 标签 -->
+                <span>
+                    {% for tag in article.tags.all %}
+                    {% if tag  %}
+                    <a href="{% url 'article:article_list' %}?tag={{ tag }}"
+                        class="badge badge-secondary" 
+                    >
+                        {{ tag }}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                </span>
+            </h4>
+            
+            
+            <!-- 摘要 -->
+            <div>
+                <p style="color: gray;">
+                    {{ article.body|safe }}
+                </p>
+            </div>
+            <!-- 注脚 -->
+            <p>
+                <!-- 附加信息 -->
+                {% if user.is_authenticated %}
+                <span>
+                    <i class="fas fa-book-reader"></i>
+                    {{ article.total_views }}&nbsp;&nbsp;&nbsp;
+                </span>
+                
+                <span>
+                    <i class="far fa-clock"></i>
+                    {{ article.created|date:'Y-m-d' }}&nbsp;&nbsp;&nbsp;
+                </span>
+                {% endif %}
+                <span>
+                    <i class="fas fa-edit"></i>
+                    {{ article.updated|date:'Y-m-d' }}
+                </span>
+            </p>
+
+        </div>
+        <hr style="width: 100%;">
+        {% endfor %}
+    </div>
+
+    <!--div class="pagination row"-->
+        <nav class="row justify-content-center">
+            <ul class="pagination">
+                <!-- 如果不是第一页，则显示上翻按钮 -->
+                {% if articles.has_previous %}
+                <li class="page-item">
+                <a class="page-link" href="?page=1&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}">
+                    &laquo; 1
+                </a>
+                </li>
+                <span>...</span>
+                <li class="page-item">
+                <a class="page-link" href="?page={{ articles.previous_page_number }}&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}" 
+                >
+                    {{ articles.previous_page_number }}
+                </a>
+                </li>
+                {% endif %}
+                
+                <!-- 当前页面 -->
+                <li class="page-item active">
+                    <span class="page-link">
+                    {{ articles.number }}
+                        <span class="sr-only">(current)</span>
+                    </span>
+                </li> 
+                <!-- 如果不是最末页，则显示下翻按钮 -->
+                {% if articles.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ articles.next_page_number }}&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}"
+                    >
+                        {{ articles.next_page_number }}
+                    </a>
+                </li>
+                <span>...</span>
+                <li class="page-item">
+                <a class="page-link" href="?page={{ articles.paginator.num_pages }}&order={{ order }}&search={{ search }}&column={{ column }}&tag={{ tag }}"
+                >
+                    {{ articles.paginator.num_pages }} &raquo;
+                </a>
+                </li>
+                {% endif %}
+          </ul>
+        </nav>
+</div>
+{% endblock content %}

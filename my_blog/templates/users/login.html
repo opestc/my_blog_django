@@ -1,0 +1,35 @@
+{% extends "base.html" %} 
+{% load bootstrap4 %}
+{% load static %}
+{% block title %} Login {% endblock title %}
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-5">
+            <form method="post" action="{% url 'users:login' %}" class="form">
+                {% csrf_token %}
+                <!-- 账号 -->
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Username" required />
+                </div>
+                <!-- 密码 -->
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required />
+                </div>
+                <!-- 提交按钮 -->
+                {% buttons %}
+                <button type="submit" class="btn btn-primary">Log in</button>
+                {% endbuttons %}
+                <input type="hidden" name="next" value="{% url 'article:index' %}" />
+            </form>
+            <br>
+            <p>Forgot password? Please contact the admin.</p>
+
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

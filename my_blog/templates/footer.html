@@ -1,0 +1,41 @@
+{% load bootstrap4 %}
+
+<!-- Footer -->
+<div>
+    <br><br><br>
+</div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" id="footer">
+    <div class="container">
+        <font size="2" color="grey" class="m-0 text-left text-grey">Copyright &copy; Yu Li 2021</font>
+        <div>
+         <ul class="navbar-nav">    
+          <li class="nav-item dropup">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Links
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="https://www.ustc.edu.cn" target="_blank">USTC</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+            </li>&nbsp;
+             
+         </ul>
+        </div>
+    </div>
+  </nav>
+<nav class="nav fixed-bottom col-1" style="height: 3.5rem;" >
+  <button type="button" id="sidebarToggler" class="btn bbtn-link">
+    &nbsp;<i class="fas fa-folder"></i>&nbsp; Sidebar</button>
+</nav> 
+<script>
+$("#sidebarToggler").click(function () {
+      var sideBar = $("#sideBar");
+      if (!sideBar.hasClass("addWidth")) {
+        $("#sideBar").addClass("addWidth");
+}
+      else {
+        $("#sideBar").removeClass("addWidth");
+}
+})
+</script>

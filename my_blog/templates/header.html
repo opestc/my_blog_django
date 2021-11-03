@@ -1,0 +1,145 @@
+<!-- 定义导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-light justify-content-between" style="background-color: #e3f2fd;">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <!-- 导航入口 -->
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+
+        {% for column in columns %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'article:article_list' %}?column={{ column.id }}">{{ column }}</a>
+        </li>
+        {% endfor %}
+
+        <!-- Django的 if 模板语句 -->
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'article:article_create' %}">Create</a>
+        </li>
+        <!-- 如果用户已经登录，则显示用户名下拉框 -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Hello, {{ user.username }}
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href='{% url "users:edit" user.id %}'>Profile</a>
+            <a class="dropdown-item" href="#" onclick="user_delete()">Delete</a>
+            <a class="dropdown-item" href="{% url 'users:logout' %}">Logout</a>
+          </div>
+        </li>
+        
+        <form 
+          style="display:none;" 
+          id="user_delete"
+          action="{% url 'users:delete' user.id %}" 
+          method="POST"
+        >
+          {% csrf_token %}
+          <button type="submit">Submit</button>
+        </form>
+        <script>
+          function user_delete() {
+            // 调用layer弹窗组件
+            layer.open({
+              title: "Warning",
+              content: "Are you sure to delete this user?",
+              yes: function(index, layero) {
+                $('form#user_delete button').click();
+                layer.close(index);
+              },
+            })
+          }
+        </script>
+        
+        {% else %}
+        <li class="nav-item"><a class="nav-link" href="{% url 'users:login' %}">Login</a></li>
+        {% endif %}
+      </ul>
+        
+
+        <!-- 如果用户未登录，则显示 “登录” -->
+
+    </div>
+
+    <form class="form-inline" >
+      <label class="sr-only">content</label>
+      <input type="text" 
+        class="form-control mr-sm-2" 
+        name="search" 
+        placeholder="Search" 
+        required
+      />
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+
+    </form>
+
+
+  </div>
+  
+</nav>
+
+<div class="container mt-4">
+  <div class="page-header">
+    <div class='jumbotron'>
+      <h1 class="display-4">This is a demo.</h1>
+
+    </div>
+  </div>
+
+</div>
+
+<div id="sideBar" class="sidenav">
+  <br>
+  <h3 >Content</h3>
+  {% if toc %}
+  <p>
+    {{ toc|safe }} 
+  </p>
+  {% else %}
+  {% for column in columns %}
+    <a href="{% url 'article:article_list' %}?column={{ column.id }}">{{ column }}</a>
+  {% endfor %}
+  {% endif %}
+</div>
+
+<style type="text/css">
+  .sidenav {
+    position: fixed;
+    height:calc(100vh - 3.5rem);
+    z-index:1;
+    top:0;
+    left: -15%;
+    width: 15%;
+    background-color: #e3f2fd;
+    overflow-x: :hidden;
+    padding-top:20px;
+    transition: width 1s;
+  }
+  .addWidth {
+    left: 0;
+    
+  }
+  .sidenav a {
+    padding:6px 8px 6px 16px;
+    text-decoration: none;
+    font-size:20px;
+    color: gray;
+    display:block;
+  }
+  .sidenav h3 {
+    padding:6px 8px 6px 16px;
+  }
+  .sidenav a:hover{
+    color:#f1f1f1;
+  }	
+  
+  .main{
+    margin-left:160px;
+    padding: 0px 10px;
+  }
+  
+</style>

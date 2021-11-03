@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+{% load static %}
+
+{% block title %}
+{{ article.title }}
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+  <h1 class="mt-4 mb-4" id="title">{{ article.title }}</h1>
+  {% if user.is_authenticated %}
+  <span>
+    <i class="fas fa-address-card"></i>&nbsp;
+    {{ article.author }}&nbsp;&nbsp;&nbsp;
+  </span>
+      {% if user == article.author %}
+       <a href="#" onclick="confirm_safe_delete()">Delete</a>&nbsp;&nbsp;&nbsp;
+       <a href="{% url 'article:article_update' article.id %}">Edit</a>&nbsp;&nbsp;&nbsp;
+      <form
+        style="display:none;"
+        id="safe_delete"
+        action="{% url 'article:article_safe_delete' article.id %}"
+        method= "POST"
+      >
+        {% csrf_token %}
+        <button type="submit">submit</button>
+      </form>
+      {% endif %}
+      <span>
+      <i class="fas fa-edit"></i>&nbsp;
+      {{ article.updated|date:'m/d/Y' }}&nbsp;&nbsp;&nbsp;
+      </span>
+  <span>
+    <i class="fas fa-book-reader"></i>&nbsp;
+    {{ article.total_views }}&nbsp;&nbsp;&nbsp;
+  </span>
+  <span>
+    <i class="fas fa-tags"></i>&nbsp;
+    {% for tag in article.tags.all %}
+    {% if tag  %}
+    <a href="{% url 'article:article_list' %}?tag={{ tag }}">
+      {{ tag }}
+    </a>&nbsp;
+    {% endif %}
+    {% endfor %}
+  </span>
+
+
+      
+
+  </div>
+  {% endif %}
+
+<div class="container">
+  <hr>
+  <div class="row">
+    <!--div id="sidebar" class="sidebar col-3">
+      <div class="sidebar__inner">
+        <div>
+          {{ toc|safe }}
+        </div>
+      </div>
+    </div-->
+    
+
+
+    <div class="col">
+      <p>
+        {{ toc|safe }}
+        {{ article.body|safe }}</p>
+    </div>
+    
+        <!-- 发表评论 -->
+        <!--hr>
+        {% if user.is_authenticated %}
+        <div>
+          <form 
+            action="{% url 'comment:post_comment' article.id %}" 
+            method="POST"
+          >
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="body">
+                <strong>
+                  我也要发言：
+                </strong>
+              </label>
+              <textarea 
+                type="text" 
+                class="form-control" 
+                id="body" 
+                name="body" 
+                rows="2"></textarea>
+            </div-->
+            <!-- 提交按钮 -->
+            <!--button type="submit" class="btn btn-primary ">发送</button>
+          </form>
+        </div>
+        <br>
+        {% else %}
+        <br>
+        <h5 class="row justify-content-center">
+          请<a href="{% url 'users:login' %}">登录</a>后回复
+        </h5>
+        <br>
+        {% endif %}-->
+        
+        <!-- 显示评论 -->
+        <!--div>
+          <h5>共有{{ comments.count }}条评论</h5>
+          {% for comment in comments %}
+          <hr>
+          <p>
+            <strong style="color: pink">
+              {{ comment.user }}
+            </strong> 于 
+            <span style="color: green">
+              {{ comment.created|date:"Y-m-d H:i:s" }}
+            </span>：
+          </p>
+          <pre style="font-family: inherit; font-size: 1em;">
+            {{ comment.body }}</pre>
+          {% endfor %}
+        </div-->
+
+      
+  </div>
+    
+</div>
+  
+<script>
+  function confirm_safe_delete() {
+    layer.open({
+      title:"Warning",
+      content:"Are you sure to delete this article?",
+      yes: function(index,layero) {
+         $('form#safe_delete button').click();
+         layer.close(index);
+      }
+    })
+  }
+</script>
+{% endblock content %}
