@@ -119,7 +119,8 @@ def article_create(request):
       new_article.save()
       
       # tags的多对多关系
-      article_post_form.save_m2m()    
+      article_post_form.save_m2m()
+      return redirect("article:article_list")
     else:
       messages.error(request,"Input is not valid")
     return redirect("article:article_create")
@@ -152,7 +153,7 @@ def article_update(request, id):
     if article_post_form.is_valid():
       article.title = request.POST['title']
       article.body = request.POST['body']
-      article.tags.set(*request.POST.get('tags').split(',')[::-1], clear = False)
+      article.tags.set(*request.POST.get('tags').split(','), clear = True)
       if request.FILES.get('avatar'):
         article.avatar = request.FILES.get('avatar')
       if request.POST['column'] != 'none':
