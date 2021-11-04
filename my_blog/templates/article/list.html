@@ -12,7 +12,7 @@
 <!-- 定义放置文章标题的div容器 -->
 <div class="container">
     {% if user.is_authenticated %}
-    <nav aria-label="breadcrumb" style="width: 100px">
+    <nav aria-label="breadcrumb" style="width: 90px">
         <ol class="breadcrumb">
             {% if order == 'total_views' %}
             <li class="breadcrumb-item">
@@ -75,7 +75,7 @@
                 <!-- 标签 -->
                 <span>
                     {% for tag in article.tags.all %}
-                    {% if tag  %}
+                    {% if tag.name  %}
                     <a href="{% url 'article:article_list' %}?tag={{ tag }}"
                         class="badge badge-secondary" 
                     >
