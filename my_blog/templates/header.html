@@ -110,7 +110,7 @@
   .sidenav {
     position: fixed;
     height:calc(100vh - 60px);
-    z-index:1;
+    z-index:9999;
     top:0;
     left: -200px;
     width: 200px;
@@ -141,5 +141,7 @@
     margin-left:160px;
     padding: 0px 10px;
   }
-  
+  .dropdown-backdrop {
+    position: static;
+  }
 </style>

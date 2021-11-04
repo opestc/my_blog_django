@@ -4,13 +4,16 @@
 <div>
     <br><br><br>
 </div>
-<footer class="navbar navbar-expand-lg navbar-light bg-light fixed-bottom" id="footer">
+<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between fixed-bottom" id="footer">
     <div class="container">
-      <button type="button" id="sidebarToggler" class="btn bbtn-link">
-        &nbsp;<i class="fas fa-folder"></i>&nbsp; Sidebar</button>
-        <font size="2" color="grey" class="m-0 text-grey">Copyright &copy; Yu Li 2021</font>
-        <div>
-         <ul class="navbar-nav">    
+      <div class="collapse navbar-collapse">
+        
+         <ul class="navbar-nav">
+            <li class="nav-item">
+              <button type="button" id="sidebarToggler" class="btn bbtn-link">
+                &nbsp;<i class="fas fa-folder"></i>&nbsp; Sidebar</button>
+            </li>
+            
           <li class="nav-item dropup">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Links
@@ -21,11 +24,16 @@
                 <a class="dropdown-item" href="#">Something else here</a>
             </div>
             </li>&nbsp;
-             
+            
+
          </ul>
+        
         </div>
+      
+      <font size="2" color="grey" class="text-grey" style="display: inline-block; float: none;text-align: center;">Copyright &copy; Yu Li 2021</font>
+      
     </div>
-</footer>
+</nav>
 <script>
 $("#sidebarToggler").click(function () {
       var sideBar = $("#sideBar");
