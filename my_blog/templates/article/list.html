@@ -3,7 +3,15 @@
 
 <!-- 写入 base.html 中定义的 title -->
 {% block title %}
-    Qin's Lab
+   {% if column %}
+    {% for col in columns %}
+        {% if col.id|slugify == column %}
+           {{ col }}
+        {% endif %}    
+     {% endfor %}
+    {% else %}
+    Welcome to my site
+   {% endif %}
 {% endblock title %}
 
 <!-- 写入 base.html 中定义的 content -->

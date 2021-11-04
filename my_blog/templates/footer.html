@@ -20,22 +20,24 @@
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 {% if user.is_authenticated %}
                 <a class="dropdown-item" href="{% url 'users:logout' %}">
-                  <i class="fas fa-sign-out-alt"></i>&nbsp;&nbsp;&nbsp;Logout
+                  <i class="fas fa-sign-out-alt"></i>
                 </a>
                 <a class="dropdown-item" href="{% url 'article:article_create' %}">
-                  <i class="fas fa-user-edit"></i>&nbsp;&nbsp;&nbsp;Post
+                  <i class="fas fa-user-edit"></i>
                 </a>
                 {% else %}
                 <a class="dropdown-item" href="{% url 'users:login' %}">
-                  <i class="fas fa-sign-in-alt"></i>&nbsp;&nbsp;&nbsp;Login
+                  <i class="fas fa-sign-in-alt"></i>
                 </a>
                 {% endif %}
                 <a class="dropdown-item" href="https://www.ustc.edu.cn" target="_blank">
-                  <i class="fas fa-university"></i>&nbsp;&nbsp;&nbsp;USTC
+                  <i class="fas fa-university"></i>
                 </a>
 
-                <a class="dropdown-item" href="https://www.google.com/maps/@31.8378417,117.2666593,19z"> <i class="fas fa-map-marker-alt"></i>&nbsp;&nbsp;&nbsp;USTC
+                <a class="dropdown-item" href="https://www.google.com/maps/@31.8378417,117.2666593,19z" target="_blank"><i class="fas fa-map-marker-alt"></i>
                 </a>
+              <a class="dropdown-item" href="mailto:example@163.com"><i class="fas fa-envelope"></i>
+              </a>
             </div>
             </li>&nbsp;
          </ul>
