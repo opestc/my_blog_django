@@ -84,8 +84,8 @@ def article_list(request):
     'tag':tag,
     'columns':columns
   }
-  if not articles:
-    messages.error(request,"No articles found.")
+#  if not articles:
+#    messages.error(request,"No articles found.")
   return render(request,'article/list.html',context)
 
 
