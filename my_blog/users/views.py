@@ -7,8 +7,17 @@ from django.contrib import messages
 from .forms import UserLoginForm, ProfileForm
 from .models import Profile
 from article.models import ArticleColumn
+from django.urls import reverse_lazy
+from bootstrap_modal_forms.generic import BSModalLoginView
+from .forms import CustomAuthenticationForm
 
 columns = ArticleColumn.objects.all()
+
+class CustomLoginView(BSModalLoginView):
+  authentication_form = CustomAuthenticationForm
+  template_name = 'users/login.html'
+  success_message = 'Success: You were successfully logged in.'
+  extra_context = dict(success_url=reverse_lazy('article:index'), columns=columns)
 
 def user_login(request):
   if request.method == "POST":
