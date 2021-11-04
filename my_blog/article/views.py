@@ -8,7 +8,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from comment.models import Comment
 from django.contrib import messages
-import markdown
+import markdown, re
 
 columns = ArticleColumn.objects.all()
 
@@ -97,9 +97,11 @@ def article_detail(request, id):
     article.total_views += 1
   article.save(update_fields=['total_views'])
   article.body = md.convert(article.body)
+  m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
+  toc = m.group(1) if m is not None else ''
   context = {
     'article':article, 
-    'toc':md.toc, 
+    'toc':toc, 
     'comments':comments,
     'columns':columns
   }
