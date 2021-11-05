@@ -20,15 +20,30 @@
         href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css"
     >
 
+
 </head>
 
 <body>
     <!-- 引入导航栏 -->
     {% include 'header.html' %}
     <!-- 预留具体页面的位置 -->
-    <div id="wrapper">
-        {% block content %}{% endblock content %}
-        <div id="push"></div>
+    
+        <div id="wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                    
+                    {% block content %}{% endblock content %}
+                    
+                </div>    
+                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    
+                    {% include 'sidebar.html' %}
+                    
+                </div> 
+            </div>    
+        </div>
+        <div id="push"></div>     
     </div>
 
     <!-- 引入注脚 -->

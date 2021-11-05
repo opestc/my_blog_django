@@ -4,9 +4,9 @@
 {% load widget_tweaks %}
 {% block title %} Login {% endblock title %}
 {% block content %}
-<div class="container">
+
     <div class="row">
-    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+    <div class="col-xs-12 col-sm-8 col-md-8 col-lg-6">
 <form method="post" action="" novalidate>
     {% csrf_token %}
     
@@ -48,5 +48,5 @@
 </form>
     </div>
     </div>
-</div>
+
 {% endblock content %}

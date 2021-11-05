@@ -3,10 +3,7 @@
 {% load static %}
 {% block title %}Create a new article{% endblock %}
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <br>
+
             <!-- 提交文章的表单 -->
             <form method="post" action="." enctype="multipart/form-data">
                 <!-- Django中需要POST数据的地方都必须有csrf_token -->
@@ -56,8 +53,6 @@
                 <!-- 提交按钮 -->
                 <button type="submit" class="btn btn-primary">Post</button>
             </form>
-        </div>
-    </div>
-</div>
+
 
 {% endblock content %}

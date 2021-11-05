@@ -18,7 +18,7 @@
 {% block content %}
 
 <!-- 定义放置文章标题的div容器 -->
-<div class="container">
+
     {% if user.is_authenticated %}
     <nav aria-label="breadcrumb" style="width: 90px">
         <ol class="breadcrumb">
@@ -170,5 +170,5 @@
                 {% endif %}
           </ul>
         </nav>
-</div>
+
 {% endblock content %}

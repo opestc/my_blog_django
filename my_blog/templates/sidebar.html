@@ -1,0 +1,36 @@
+{% load static %}
+<div id="sidebar" class="sidebar">
+  <div class="sidebar__inner">
+<h3 class="mt-4 mb-4">Content</h3>
+<hr>
+  {% if toc %}
+  <p>
+    {{ toc|safe }} 
+  </p>
+  {% else %}
+  {% for column in columns %}
+    <p><a style="color: black;" href="{% url 'article:article_list' %}?column={{ column.id }}">{{ column }}</a></p>
+  {% endfor %}
+  {% endif %}
+</div>
+</div>
+<style>
+  .sidebar{
+    will-change: min-height;
+  }
+  
+  .sidebar__inner{
+    transform: translate(0, 0);
+    transform: translate3d(0, 0, 0);
+    will-change: position, transform;
+  }
+</style>
+{% block script %}
+<script src="{% static 'sticky_sidebar/jquery.sticky-sidebar.min.js' %}"></script>
+<script type="text/javascript">
+  $('#sidebar').stickySidebar({
+    topSpacing: 20,
+    bottomSpacing: 20,
+  });
+</script>
+{% endblock script %}
