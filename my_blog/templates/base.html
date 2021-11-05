@@ -19,6 +19,43 @@
         rel="stylesheet" 
         href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css"
     >
+    <style type="text/css">
+        .sidenav {
+            position: fixed;
+            height:calc(100vh - 50px);
+            z-index:1;
+            top:0;
+            left: -180px;
+            width: 180px;
+            background-color: #e3f2fd;
+            overflow-x: :hidden;
+            padding-top:20px;
+            transition: width 1s;
+        }
+        .addWidth {
+            left: 0;
+            
+        }
+        .sidenav a {
+            padding:6px 8px 6px 16px;
+            text-decoration: none;
+            font-size:20px;
+            color: gray;
+            display:block;
+        }
+        .sidenav h3 {
+            padding:6px 8px 6px 16px;
+        }
+        .sidenav a:hover{
+            color:#f1f1f1;
+        }	
+        
+        .main{
+            margin-left:160px;
+            padding: 0px 10px;
+        }
+        
+    </style>
 
 
 </head>
