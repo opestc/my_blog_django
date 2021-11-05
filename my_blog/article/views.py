@@ -120,9 +120,10 @@ def article_create(request):
       
       # tags的多对多关系
       article_post_form.save_m2m()
+      messages.success(request, 'The article was created successfully.')
       return redirect("article:article_list")
     else:
-      messages.error(request,"Input is not valid")
+      messages.error(request,"Input was not valid")
     return redirect("article:article_create")
   else:
     article_post_form = ArticlePostForm(request.POST, request.FILES)
@@ -147,7 +148,8 @@ def article_update(request, id):
   article = ArticlePost.objects.get(id=id)
   
   if request.user != article.author:
-    return HttpResponse("You have no permission.")
+    messages.error(request,"You have no permission.")
+    return redirect("article:article_detail", id=id)
   if request.method == "POST":
     article_post_form = ArticlePostForm(request.POST, request.FILES)
     if article_post_form.is_valid():
@@ -162,8 +164,9 @@ def article_update(request, id):
         article.column = None
       
       article.save()
+      messages.success(request,"The article was updated successfully.")
     else:
-      messages.error(request,"Input is not valid")
+      messages.error(request,"Input was not valid")
       
     return redirect("article:article_detail", id=id)
   

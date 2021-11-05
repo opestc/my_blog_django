@@ -30,9 +30,11 @@
 
         <!-- Django的 if 模板语句 -->
         {% if user.is_authenticated %}
+        {% if user.is_superuser %}
         <li class="nav-item">
           <a class="nav-link" href="{% url 'article:article_create' %}">Post</a>
         </li>
+          {% endif %}
         <!-- 如果用户已经登录，则显示用户名下拉框 -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -69,7 +71,13 @@
         </script>
         
         {% else %}
-        <li class="nav-item"><a class="nav-link" href="{% url 'users:login' %}">Login</a></li>
+        <!--li class="nav-item"><a class="nav-link" href="{% url 'users:login' %}">Login</a></li-->
+          <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content"></div>
+            </div>
+          </div>
+        <button id="login-btn" class="btn bbtn-link" type="button" name="button"><i class="fas fa-sign-in-alt"></i></button>
         {% endif %}
         </ul>
 
@@ -87,18 +95,18 @@
 </nav>
 
 <div class="container mt-4">
-  <div class="page-header">
+
     <div class='jumbotron'>
       <h1 class="display-4">This is a demo.</h1>
 
     </div>
-  </div>
+
 
 </div>
 
 <div id="sideBar" class="sidenav">
   <br>
-  <h3 >Content</h3>
+  <h3 >Contents</h3>
 
   {% if toc %}
   <p>

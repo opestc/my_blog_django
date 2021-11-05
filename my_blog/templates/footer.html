@@ -8,28 +8,18 @@
     <div class="container">
       <div class="collapse navbar-collapse" >
         
-         <ul class="navbar-nav mr-auto" >
+         <ul class="navbar-nav mr-auto"> 
             <li class="nav-item">
               <button type="button" id="sidebarToggler" class="btn bbtn-link">
-                <i class="fas fa-bars"></i></button>
+              <i class="fas fa-bars"></i></button>
             </li>&nbsp;
-            <li class="nav-item dropup">
+            
+            <li class="nav-item dropup" >
             <a class="nav-link" href="#" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-link"></i>
             </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                {% if user.is_authenticated %}
-                <a class="dropdown-item" href="{% url 'users:logout' %}">
-                  <i class="fas fa-sign-out-alt"></i>
-                </a>
-                <a class="dropdown-item" href="{% url 'article:article_create' %}">
-                  <i class="fas fa-user-edit"></i>
-                </a>
-                {% else %}
-                <a class="dropdown-item" href="{% url 'users:login' %}">
-                  <i class="fas fa-sign-in-alt"></i>
-                </a>
-                {% endif %}
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="width: auto;">
+                
                 <a class="dropdown-item" href="https://www.ustc.edu.cn" target="_blank">
                   <i class="fas fa-university"></i>
                 </a>
@@ -39,8 +29,9 @@
               <a class="dropdown-item" href="mailto:example@163.com"><i class="fas fa-envelope"></i>
               </a>
             </div>
-            </li>&nbsp;
+            </li>&nbsp;      
          </ul>
+         
           <span style="font-size: 14px; color: grey; display: inline-block; float: none;text-align: right;">
             Copyright &copy; Yu Li 2021
           </span>

@@ -1,12 +1,7 @@
-{% extends "base.html" %} 
-{% load bootstrap4 %}
-{% load static %}
-{% load widget_tweaks %}
-{% block title %} Login {% endblock title %}
-{% block content %}
 
-    <div class="row">
-    <div class="col-xs-12 col-sm-8 col-md-8 col-lg-6">
+{% load bootstrap4 %}
+{% load widget_tweaks %}
+
 <form method="post" action="" novalidate>
     {% csrf_token %}
     
@@ -46,7 +41,3 @@
     </div>
     
 </form>
-    </div>
-    </div>
-
-{% endblock content %}

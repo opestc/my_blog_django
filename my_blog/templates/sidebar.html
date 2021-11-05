@@ -1,7 +1,7 @@
 {% load static %}
 <div id="sidebar" class="sidebar">
   <div class="sidebar__inner">
-<h3 class="mt-4 mb-4">Content</h3>
+<h3 class="mt-4 mb-4">Contents</h3>
 <hr>
   {% if toc %}
   <p>
@@ -26,7 +26,6 @@
   }
 </style>
 {% block script %}
-<script src="{% static 'sticky_sidebar/jquery.sticky-sidebar.min.js' %}"></script>
 <script type="text/javascript">
   $('#sidebar').stickySidebar({
     topSpacing: 20,
