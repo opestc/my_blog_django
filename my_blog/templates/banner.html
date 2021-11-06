@@ -1,0 +1,38 @@
+<div class="container">
+	<div class="row justify-content-md-center">
+		<div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+<div id="banners" class="carousel slide" data-ride="carousel">
+		<ol class="carousel-indicators out">
+			{% for v in banner_list %}
+			{% if v.is_active %}
+			<li data-target="#banners" class="active" data-slide-to="{{v.idx}}"></li>
+			{% else %}
+			<li data-target="#banners" data-slide-to="{{v.idx}}" ></li>
+			{% endif %}
+			{% endfor %}
+		</ol>
+		<div class="carousel-inner text-center">
+			{% for v in banner_list %}
+			{% if v.is_active %}
+			<div class="carousel-item active">
+				<a href="{{v.link_url}}">
+					<img src="{{ v.pic.url }}" alt="{{v.title}}" class="d-block w-100" />
+				</a>
+			</div>
+			{% else %}
+			<div class="carousel-item">
+				<a href="{{v.link_url}}">
+					<img src="{{ v.pic.url }}" alt="{{v.title}}" class="d-block w-100" />
+				</a>
+			</div>
+			{% endif %}
+			{% endfor %}
+		</div>
+		<a class="carousel-control-prev" data-slide="prev" role="button" href="#banners"><i class="fas fa-chevron-left"></i></a>
+		<a class="carousel-control-next" data-slide="next" role="button" href="#banners"><i class="fas fa-chevron-right"></i></a>
+	</div>
+</div>
+</div>
+</div>
+	<hr>
+

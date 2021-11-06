@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from .models import ArticlePost,ArticleColumn
+from .models import ArticlePost,ArticleColumn,Banner
 from django.http import HttpResponse,Http404
 from .forms import ArticlePostForm
 from django.contrib.auth.models import User
@@ -18,11 +18,13 @@ md = markdown.Markdown(
   'markdown.extensions.codehilite',
   'markdown.extensions.toc',
   ])
-  
+
 def params_replace(data):
   for column in columns:
     if column.title == 'Home':
+      banner_list=Banner.objects.all()
       data['column']=str(column.id)
+      data['banner_list'] = banner_list
   return data
 
 def index(request):
@@ -42,9 +44,9 @@ def article_list(request):
   order = request.GET.get('order')
   column = request.GET.get('column')
   tag = request.GET.get('tag')
-  
+  banner_list=Banner.objects.all()
   articles = ArticlePost.objects.all()
-  
+  context = {}
 
   # 搜索查询集
   if search:
@@ -52,14 +54,18 @@ def article_list(request):
       Q(title__icontains=search) |
       Q(body__icontains=search)
     )
-    
+
   else:
     search = ''
     
   # 栏目查询集
   if column is not None:
+    
     if column.isdigit():
       articles = articles.filter(column=column)
+      if columns.filter(id=int(column)) == 'Home':
+        context['banner_list'] = banner_list
+      
     else:
       raise Http404
   # 标签查询集
@@ -82,7 +88,8 @@ def article_list(request):
     'search':search,
     'column':column,
     'tag':tag,
-    'columns':columns
+    'columns':columns,
+    'banner_list': banner_list
   }
 #  if not articles:
 #    messages.error(request,"No articles found.")
@@ -99,12 +106,12 @@ def article_detail(request, id):
   article.body = md.convert(article.body)
   m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
   toc = m.group(1) if m is not None else ''
-  context = {
+  context.update({
     'article':article, 
     'toc':toc, 
     'comments':comments,
     'columns':columns
-  }
+  })
   return render(request,'article/detail.html',context)
 
 @login_required(login_url='/user/login')

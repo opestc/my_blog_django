@@ -54,5 +54,17 @@ class ArticlePost(models.Model):
   def get_absolute_url(self):
     return reverse('article:article_detail', args=[self.id])
 
+class Banner(models.Model):
+  title=models.CharField('标题',max_length=50)
+  pic=models.ImageField('轮播图',upload_to='banner/%Y%m%d')
+  link_url=models.URLField('图片连接',max_length=100)
+  idx=models.IntegerField('索引排序')
+  is_active=models.BooleanField('是否是active',default=False)
+  create_time=models.DateTimeField('创建时间',default=timezone.now)
   
+  def __str__(self):
+    return self.title
+  
+  class Meta:
+    ordering = ("-create_time", "-idx")
   
