@@ -1,14 +1,19 @@
+from datetime import datetime, timedelta, date
 from django.shortcuts import render,redirect,get_object_or_404
-from .models import ArticlePost,ArticleColumn,Banner
+from .models import ArticlePost,ArticleColumn,Banner,Event
+from .utils import Calendar
 from django.http import HttpResponse,Http404
-from .forms import ArticlePostForm
+from .forms import ArticlePostForm, EventForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from comment.models import Comment
 from django.contrib import messages
-import markdown, re
+from django.views import generic
+from django.utils.safestring import mark_safe
+
+import markdown, re, calendar
 
 columns = ArticleColumn.objects.all()
 
@@ -63,9 +68,6 @@ def article_list(request):
     
     if column.isdigit():
       articles = articles.filter(column=column)
-      if columns.filter(id=int(column)) == 'Home':
-        context['banner_list'] = banner_list
-      
     else:
       raise Http404
   # 标签查询集
@@ -81,7 +83,7 @@ def article_list(request):
   articles = paginator.get_page(page)
   for article in articles:
     article.body = md.convert(article.body)
-  context = {
+  context={
     'articles': articles,
     #'toc':md.toc, 
     'order':order,
@@ -89,7 +91,7 @@ def article_list(request):
     'column':column,
     'tag':tag,
     'columns':columns,
-    'banner_list': banner_list
+    'banner_list':banner_list,
   }
 #  if not articles:
 #    messages.error(request,"No articles found.")
@@ -106,12 +108,12 @@ def article_detail(request, id):
   article.body = md.convert(article.body)
   m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
   toc = m.group(1) if m is not None else ''
-  context.update({
+  context = {
     'article':article, 
     'toc':toc, 
     'comments':comments,
     'columns':columns
-  })
+  }
   return render(request,'article/detail.html',context)
 
 @login_required(login_url='/user/login')
@@ -188,4 +190,64 @@ def article_update(request, id):
     }
     return render(request, 'article/update.html', context)
   
+  # 点击日历对应日期框，通过AJAX传入
+def add_event(request):
+    start = request.GET.get("start", None)
+    end = request.GET.get("end", None)
+    title = request.GET.get("title", None)
+    new_event = Event(title=str(title), start_time=start, end_time=end)
+    new_event.save()	# 保存到数据库
+    data = {}
+    return JsonResponse(data)  
   
+class CalendarView(generic.ListView):
+  model = Event
+  template_name = 'article/calendar.html'
+  
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    #d = get_date(self.request.GET.get('day', None))
+    #cal = Calendar(d.year, d.month)
+    #html_cal = cal.formatmonth(withyear=True)
+    #context['calendar'] = mark_safe(html_cal)
+    
+    d = get_date(self.request.GET.get('month', None))
+    cal = Calendar(d.year, d.month)
+    html_cal = cal.formatmonth(withyear=True)
+    context['calendar'] = mark_safe(html_cal)
+    context['prev_month'] = prev_month(d)
+    context['next_month'] = next_month(d)
+ 
+    return context
+  
+def get_date(req_day):
+  if req_day:
+    year, month = (int(x) for x in req_day.split('-'))
+    return date(year, month, day=1)
+  return datetime.today()
+
+def prev_month(d):
+  first = d.replace(day=1)
+  prev_month = first - timedelta(days=1)
+  month = 'month=' + str(prev_month.year) + '-' + str(prev_month.month)
+  return month
+
+def next_month(d):
+  days_in_month = calendar.monthrange(d.year, d.month)[1]
+  last = d.replace(day=days_in_month)
+  next_month = last + timedelta(days=1)
+  month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
+  return month
+
+def event(request, event_id=None):
+  instance = Event()
+  if event_id:
+    instance = get_object_or_404(Event, pk=event_id)
+  else:
+    instance = Event()
+    
+  form = EventForm(request.POST or None, instance=instance)
+  if request.POST and form.is_valid():
+    form.save()
+    return redirect("article:calendar")
+  return render(request, 'article/event.html', {'form':form})

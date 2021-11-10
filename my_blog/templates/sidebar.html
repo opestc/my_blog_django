@@ -1,6 +1,17 @@
-{% load static %}
-<div id="sidebar" class="sidebar">
-  <div class="sidebar__inner">
+<style>
+  .sidebar{
+    will-change: min-height;
+  }
+  
+  .sidebar__inner{
+    transform: translate(0, 0);
+    transform: translate3d(0, 0, 0);
+    will-change: position, transform;
+  }
+  
+  
+</style>
+
 <h3 class="mt-4 mb-4">Contents</h3>
 <hr>
   {% if toc %}
@@ -13,33 +24,19 @@
   {% endfor %}
   {% endif %}
   <hr>
-
-        <div class="card h-100">
-          <h5 class="card-header">
-            
-          </h5>
-          <div class="card-body">
-            
-          </div>
-          <div class="card-footer">
-            
-          </div>
-        </div>
-      </div>
+  {% include 'calendar.html' %}
+  {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/cal_styles.css' %}">
+    
+    <div class="clearfix">
+      <a class="btn btn-primary" id="left"  href="{% url 'article:calendar' %}"> Calendar </a>
       
+      <a class="btn btn-primary" id="right" href="{% url 'article:event_new' %}">Event </a>
     </div>
-
-<style>
-  .sidebar{
-    will-change: min-height;
-  }
+<div class="container">
+  {{ calendar }}
   
-  .sidebar__inner{
-    transform: translate(0, 0);
-    transform: translate3d(0, 0, 0);
-    will-change: position, transform;
-  }
-</style>
+</div>
 {% block script %}
 <script type="text/javascript">
   $('#sidebar').stickySidebar({
@@ -47,4 +44,8 @@
     bottomSpacing: 20,
   });
 </script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+  crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+  crossorigin="anonymous"></script>
 {% endblock script %}

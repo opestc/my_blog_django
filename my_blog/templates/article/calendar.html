@@ -1,0 +1,14 @@
+{% extends 'article/cal_base.html' %}
+{% load bootstrap4 %}
+{% block title %} Calendar {% endblock %}
+{% block content %}
+<div class="clearfix">
+	<a class="btn btn-primary btn-lg active" id="left"  href="{% url 'article:calendar' %}?{{ prev_month }}"> Prev Month </a>
+	
+	<a class="btn btn-primary btn-lg active" id="left" href="{% url 'article:calendar' %}?{{ next_month }}"> Next Month </a>
+
+	<a class="btn btn-primary btn-lg active" id="right" href="{% url 'article:event_new' %}"> New Event </a>
+	<a class="btn btn-primary btn-lg active" id="right" href="{% url 'article:index' %}"> Home </a>
+</div>
+{{ calendar }}
+{% endblock %}
