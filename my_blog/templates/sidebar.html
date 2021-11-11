@@ -24,28 +24,25 @@
   {% endfor %}
   {% endif %}
   <hr>
-  {% include 'calendar.html' %}
-  {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/cal_styles.css' %}">
-    
-    <div class="clearfix">
-      <a class="btn btn-primary" id="left"  href="{% url 'article:calendar' %}"> Calendar </a>
-      
-      <a class="btn btn-primary" id="right" href="{% url 'article:event_new' %}">Event </a>
-    </div>
-<div class="container">
-  {{ calendar }}
-  
-</div>
+
+<a class="btn btn-primary"  href="#" onclick="open_calendar()"> Group Calendar </a>
+
 {% block script %}
+<script>
+  function open_calendar() {
+    layer.open({
+      type: 2,
+      title:"Calendar",
+      maxmin: true,
+      area: ['900px', '500px'],
+      content:"calendar/",
+    })
+  }
+</script>
 <script type="text/javascript">
   $('#sidebar').stickySidebar({
     topSpacing: 20,
     bottomSpacing: 20,
   });
 </script>
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-  crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-  crossorigin="anonymous"></script>
 {% endblock script %}

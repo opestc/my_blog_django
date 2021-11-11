@@ -5,15 +5,18 @@ Event
 {% endblock %}
 
 {% block content %}
-<div class="clearfix">
-	<a class="btn btn-primary btn-lg active" id="left" href="{% url 'article:calendar' %}"> Calendar </a>
-</div>
 
 <form method="post">
 	{% csrf_token %}
 	<table class="form form-table">
 		{{ form }}
-		<tr><td colspan="2"><button type="submit" class="btn btn-secondary" id="right"> Submit </button></td></tr>
+		
+		<tr>
+			<td colspan="1"><a class="btn btn-primary" href="{% url 'article:calendar' %}"> Back </a></td>
+			{% if user.is_authenticated %}
+			<td colspan="1"><button type="submit" class="btn btn-primary" id="right"> Submit </button></td>
+			{% endif %}
+		</tr>
 	</table>
 </form>
 {% endblock %}

@@ -12,7 +12,8 @@ from comment.models import Comment
 from django.contrib import messages
 from django.views import generic
 from django.utils.safestring import mark_safe
-
+from bootstrap_modal_forms.generic import BSModalLoginView
+from django.urls import reverse_lazy
 import markdown, re, calendar
 
 columns = ArticleColumn.objects.all()
@@ -251,3 +252,8 @@ def event(request, event_id=None):
     form.save()
     return redirect("article:calendar")
   return render(request, 'article/event.html', {'form':form})
+
+class CustomEventView(BSModalLoginView):
+  template_name = 'article/event.html'
+  success_message = 'Success: The event was successfully created/updated.'
+  extra_context = dict(success_url=reverse_lazy('article:calendar'))

@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.urls import reverse
 from taggit.managers import TaggableManager
 from PIL import Image
-
+import time
 # Create your models here.
 class ArticleColumn(models.Model):
   title = models.CharField(max_length=100, blank=True)
@@ -79,9 +79,13 @@ class Event(models.Model):
     return self.title
   
   class Meta:
-    ordering = ("-start_time",)
+    ordering = ("start_time",)
     
   @property
   def get_html_url(self):
+    start = str(self.start_time)
+    t = time.strptime(start, '%Y-%m-%d %H:%M:%S%z')
+    t = time.strftime('%H:%M',t)
     url = reverse('article:event_edit', args=[self.id])
-    return f'<a href="{url}"> {self.title} </a>'
+    return f'<a href="{url}">{t} {self.title} </a>'
+  
