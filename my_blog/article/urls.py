@@ -11,7 +11,7 @@ urlpatterns= [
   path('article-safe-delete/<int:id>/', views.article_safe_delete, name='article_safe_delete'),
   path('update/<int:id>/', views.article_update, name='article_update'),
   path('calendar/', views.CalendarView.as_view(), name='calendar'),  # 日历表
-  path('add_event/', views.add_event, name='add_event'), 
   path('calendar/event/new/', views.event, name='event_new'),
   path('calendar/event/edit/<int:event_id>', views.event, name='event_edit'),
+  path('events/', views.event_modal, name='event_modal'),
 ]

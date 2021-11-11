@@ -72,7 +72,6 @@ class Event(models.Model):
   title = models.CharField(max_length=255, null=True, blank=True)
   start_time = models.DateTimeField(default='')
   end_time = models.DateTimeField(default='')
-  create_time = models.DateTimeField(default=timezone.now)
   description = models.TextField(max_length=20, null=True, blank=True)
   
   def __str__(self):

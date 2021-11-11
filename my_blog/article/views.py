@@ -17,6 +17,7 @@ from django.urls import reverse_lazy
 import markdown, re, calendar
 
 columns = ArticleColumn.objects.all()
+events=Event.objects.all()
 
 md = markdown.Markdown(
   extensions=[
@@ -93,6 +94,7 @@ def article_list(request):
     'tag':tag,
     'columns':columns,
     'banner_list':banner_list,
+    'events':events
   }
 #  if not articles:
 #    messages.error(request,"No articles found.")
@@ -113,7 +115,8 @@ def article_detail(request, id):
     'article':article, 
     'toc':toc, 
     'comments':comments,
-    'columns':columns
+    'columns':columns,
+    'events':events
   }
   return render(request,'article/detail.html',context)
 
@@ -139,7 +142,8 @@ def article_create(request):
     article_post_form = ArticlePostForm(request.POST, request.FILES)
     context = {
       'article_post_form': article_post_form, 
-      'columns':columns
+      'columns':columns,
+      'events':events
     }
     return render(request,'article/create.html',context)
 
@@ -191,15 +195,6 @@ def article_update(request, id):
     }
     return render(request, 'article/update.html', context)
   
-  # 点击日历对应日期框，通过AJAX传入
-def add_event(request):
-    start = request.GET.get("start", None)
-    end = request.GET.get("end", None)
-    title = request.GET.get("title", None)
-    new_event = Event(title=str(title), start_time=start, end_time=end)
-    new_event.save()	# 保存到数据库
-    data = {}
-    return JsonResponse(data)  
   
 class CalendarView(generic.ListView):
   model = Event
@@ -250,10 +245,10 @@ def event(request, event_id=None):
   form = EventForm(request.POST or None, instance=instance)
   if request.POST and form.is_valid():
     form.save()
-    return redirect("article:calendar")
+    return redirect("article:index")
   return render(request, 'article/event.html', {'form':form})
 
-class CustomEventView(BSModalLoginView):
-  template_name = 'article/event.html'
-  success_message = 'Success: The event was successfully created/updated.'
-  extra_context = dict(success_url=reverse_lazy('article:calendar'))
+  
+def event_modal(request):
+
+  return render(request, 'article/cal_modal.html', {'events':events})
