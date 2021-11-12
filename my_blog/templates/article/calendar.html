@@ -7,7 +7,7 @@
 	
 	<a class="btn btn-primary" id="left" href="{% url 'article:calendar' %}?{{ next_month }}"> Next </a>
 
-	<a class="btn btn-primary" id="right" href="{% url 'article:event_new' %}"> Event </a>
+	<a class="btn btn-primary" id="right" href="{% url 'article:event_new' %}"> Add </a>
 </div>
 {{ calendar }}
 {% endblock %}
