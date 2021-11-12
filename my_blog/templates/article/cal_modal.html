@@ -15,6 +15,13 @@
 				</div>
 				<div class="modal-body">
 					<div class="calendar">
+						<script>
+							var token = '{{csrf_token}}';
+							var URL ="{% url 'article:event_delete' %}";
+							var headers = { "X-CSRFToken": token };
+						</script>
+
+
 						<script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.7/fullcalendar.min.js"></script>
 						<script>
 							
@@ -31,30 +38,54 @@
 									height: 'auto',
 									navLinks: true, // can click day/week names to navigate views
 									editable: true,
+									dayMaxEvents: true,
 									selectable: true,
 									selectMirror: true,
 									nowIndicator: true,
 									events: [
 										{% for event in events %}
 										{
+											id    : '{{ event.id }}',
 											title : '{{ event.title }}',
 											start : '{{ event.start_time|date:'c' }}',
 											end   : '{{ event.end_time|date:'c' }}'
+										//	description: '{{ event.description }}'
 										},
 										{% endfor %}
 
 									],
+									{% if user.is_superuser %}
 									eventClick: function(arg) {
+										var token = '{{csrf_token}}';
 										if (confirm('Are you sure you want to delete this event?')) {
-											arg.event.remove()
-										}
-									}
+											$.ajax({
+												url: URL,
+												type: 'POST',
+												headers:{
+													"X-CSRFToken": token
+												},
+												data: {'id':arg.event.id},
+												success: function () {
+													location.reload();
+												}
+											});
+										}}
+									{% endif %}		
 								});
 								
 								calendar.render();
 							});
 							
 						</script>
+						<form
+							style="display:none;"
+							id="event_delete"
+							action="{% if event_id %}{% url 'article:event_delete' event_id %}{% endif %}"
+							method= "POST"
+						>
+							{% csrf_token %}
+							<button type="submit">submit</button>
+						</form>
 						<div id='calendar'></div>
 
 					</div>

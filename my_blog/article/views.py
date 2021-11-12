@@ -17,7 +17,7 @@ from django.urls import reverse_lazy
 import markdown, re, calendar
 
 columns = ArticleColumn.objects.all()
-events=Event.objects.all()
+
 
 md = markdown.Markdown(
   extensions=[
@@ -36,7 +36,7 @@ def params_replace(data):
 
 def index(request):
   method = request.method
-  
+  data = None
   if method == 'GET':
     data = request.GET.copy()
     data = params_replace(data)
@@ -53,6 +53,7 @@ def article_list(request):
   tag = request.GET.get('tag')
   banner_list=Banner.objects.all()
   articles = ArticlePost.objects.all()
+  events=Event.objects.all()
   context = {}
 
   # 搜索查询集
@@ -104,7 +105,7 @@ def article_list(request):
 def article_detail(request, id):
   article = ArticlePost.objects.get(id=id)
   comments = Comment.objects.filter(article=id)
-  
+  events=Event.objects.all()
   if request.user != article.author:
     article.total_views += 1
   article.save(update_fields=['total_views'])
@@ -160,7 +161,7 @@ def article_safe_delete(request, id):
 @login_required(login_url='/user/login/')
 def article_update(request, id):
   article = ArticlePost.objects.get(id=id)
-  
+  events=Event.objects.all()
   if request.user != article.author:
     messages.error(request,"You have no permission.")
     return redirect("article:article_detail", id=id)
@@ -244,11 +245,26 @@ def event(request, event_id=None):
     
   form = EventForm(request.POST or None, instance=instance)
   if request.POST and form.is_valid():
-    form.save()
+    if request.user.is_superuser:
+      form.save()
+    else:
+      messages.error(request,"You have no permission.")
     return redirect("article:index")
   return render(request, 'article/event.html', {'form':form})
 
   
 def event_modal(request):
-
+  events=Event.objects.all()
   return render(request, 'article/cal_modal.html', {'events':events})
+
+@login_required(login_url='/user/login/')
+def event_delete(request):
+
+  if not request.user.is_superuser  or request.method != 'POST':
+    messages.error(request,"You have no permission.")
+
+  else:
+    id = request.POST['id']
+    event = Event.objects.get(id=id)
+    event.delete()
+  return redirect("article:calendar")
