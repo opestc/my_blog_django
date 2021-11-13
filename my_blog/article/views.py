@@ -249,15 +249,13 @@ def event(request, event_id=None):
       form.save()
     else:
       messages.error(request,"You have no permission.")
-    return redirect("article:index")
+    return redirect("article:calendar")
   return render(request, 'article/event.html', {'form':form})
-
   
 def event_modal(request):
   events=Event.objects.all()
   return render(request, 'article/cal_modal.html', {'events':events})
 
-@login_required(login_url='/user/login/')
 def event_delete(request):
 
   if not request.user.is_superuser  or request.method != 'POST':

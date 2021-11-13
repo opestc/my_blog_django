@@ -21,12 +21,14 @@
     >
     <link href="{% static 'plugins/fullcalendar/main.css' %}" rel="stylesheet" />
     <script src="{% static 'sticky_sidebar/jquery.sticky-sidebar.min.js' %}"></script>
+
     <script src="{% static 'js/jquery.bootstrap.modal.forms.js' %}"></script>
     <script src="{% static 'layer/layer.js' %}"></script>
     <script src="{% static 'plugins/fullcalendar/main.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js" integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js" integrity="sha512-RdSPYh1WA6BF0RhpisYJVYkOyTzK4HwofJ3Q7ivt/jkpW6Vc8AurL1R+4AUcvn9IwEKAPm/fk7qFZW3OuiUDeg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
     <style type="text/css">
         .sidenav {
             position: fixed;
@@ -75,8 +77,6 @@
         }
     </style>
 
-
-    
     
 </head>
 
@@ -112,18 +112,6 @@
     {% include 'footer.html' %}
 
     {% include 'back_to_top_func.html' %}
-
-    <script type="text/javascript">
-        
-        $(function () {
-            // Log in button
-            $("#login-btn").modalForm({
-                formURL: "{% url 'users:login' %}"
-            });
-
-        });
-        
-    </script>
     <style>
         html, body {
             height: 100%;
@@ -142,6 +130,7 @@
         }
 
     </style>
+
     {% if messages %}
     <script>
         {% for msg in messages %}

@@ -69,26 +69,31 @@
             })
           }
         </script>
-        
+          <!-- 如果用户未登录，则显示 “登录” -->
         {% else %}
         <!--li class="nav-item"><a class="nav-link" href="{% url 'users:login' %}">Login</a></li-->
-          <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+          
+            <button id="login-btn" class="btn bbtn-link" type="button" name="button"><i class="fas fa-sign-in-alt"></i></button>
+          <div class="modal fade" tabindex="-1" role="dialog" id="login">
             <div class="modal-dialog" role="document">
-              <div class="modal-content"></div>
+              <div class="modal-content login-modal-content"></div>
             </div>
           </div>
-        <button id="login-btn" class="btn bbtn-link" type="button" name="button"><i class="fas fa-sign-in-alt"></i></button>
+          <script type="text/javascript">
+            $(function () {
+              // Log in button
+              $("#login-btn").modalForm({
+                modalID: "#login",
+                modalForm: ".login-modal-content form",
+                formURL: "{% url 'users:login' %}"
+              });
+            });  
+          </script>
+
         {% endif %}
         </ul>
 
-        
-
-        <!-- 如果用户未登录，则显示 “登录” -->
-
     </div>
-
-    
-
 
   </div>
   
