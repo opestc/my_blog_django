@@ -5,6 +5,10 @@ from django.urls import reverse
 from taggit.managers import TaggableManager
 from PIL import Image
 import time
+from dateutil import tz
+
+mytz = tz.gettz('Asia/Shanghai')
+
 # Create your models here.
 class ArticleColumn(models.Model):
   title = models.CharField(max_length=100, blank=True)
@@ -82,7 +86,7 @@ class Event(models.Model):
     
   @property
   def get_html_url(self):
-    start = str(self.start_time)
+    start = str(self.start_time.astimezone(mytz))
     t = time.strptime(start, '%Y-%m-%d %H:%M:%S%z')
     t = time.strftime('%H:%M',t)
     url = reverse('article:event_edit', args=[self.id])

@@ -14,10 +14,11 @@ from django.views import generic
 from django.utils.safestring import mark_safe
 from bootstrap_modal_forms.generic import BSModalLoginView
 from django.urls import reverse_lazy
-import markdown, re, calendar
+import markdown, re, calendar, json
+from dateutil import tz
 
 columns = ArticleColumn.objects.all()
-
+mytz = tz.gettz('Asia/Shanghai')
 
 md = markdown.Markdown(
   extensions=[
@@ -239,18 +240,28 @@ def next_month(d):
 def event(request, event_id=None):
   instance = Event()
   if event_id:
-    instance = get_object_or_404(Event, pk=event_id)
-  else:
-    instance = Event()
-    
+    instance = get_object_or_404(Event, pk=event_id)    
   form = EventForm(request.POST or None, instance=instance)
-  if request.POST and form.is_valid():
-    if request.user.is_superuser:
+  if request.POST and form.is_valid() and request.user.is_superuser:
+      response = {}
       form.save()
-    else:
-      messages.error(request,"You have no permission.")
-    return redirect("article:calendar")
-  return render(request, 'article/event.html', {'form':form})
+      eventObj = Event.objects.order_by('-pk')[0]
+      response['id'] = eventObj.id
+      response['title'] = eventObj.title
+      response['start'] = eventObj.start_time.astimezone(mytz)
+      response['end'] = eventObj.end_time.astimezone(mytz)
+      response['description'] = eventObj.description
+      
+      return HttpResponse(
+        json.dumps(response,indent=4, sort_keys=True, default=str),
+        content_type="application/json"
+      )
+  if request.method == 'GET' :
+      return render(request, 'article/event.html', {'form':form})
+  return HttpResponse(
+    json.dumps({"error":"You have no permission."}),
+    content_type="application/json") 
+
   
 def event_modal(request):
   events=Event.objects.all()
