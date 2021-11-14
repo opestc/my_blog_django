@@ -6,6 +6,7 @@ from taggit.managers import TaggableManager
 from PIL import Image
 import time
 from dateutil import tz
+from ckeditor.fields import RichTextField
 
 mytz = tz.gettz('Asia/Shanghai')
 
@@ -38,7 +39,8 @@ class ArticlePost(models.Model):
         
       return article
   
-  body = models.TextField()
+  #body = models.TextField()
+  body = RichTextField()
   created = models.DateTimeField(default=timezone.now)
   updated = models.DateTimeField(auto_now=True)
   total_views = models.PositiveIntegerField(default=0)

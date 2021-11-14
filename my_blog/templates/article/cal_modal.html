@@ -76,7 +76,7 @@
 	</div>
 	
 	
-	<div class="container">
+
 		<div class="card">
 			<div class="card-header">
 				<h5>Group Calendar</h5>
@@ -93,7 +93,7 @@
 
 			</div>
 		</div>
-	</div>	
+
 
 </div>
 
@@ -103,20 +103,19 @@
 		var calendarEl = document.getElementById('calendar');
 		
 		var calendar = new FullCalendar.Calendar(calendarEl, {
+			height: 'auto',
 			initialView: 'dayGridMonth',
 			headerToolbar: {
 				left: 'prev,next today',
 				center: 'title',
 				right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
 			},
-			height: 'auto',
 			navLinks: true, // can click day/week names to navigate views
-			editable: true,
-			dayMaxEvents: true,
 			selectable: true,
 			selectMirror: true,
 			nowIndicator: true,
-			
+			editable: true,
+			dayMaxEvents: true,
 			
 			eventClick: function(arg) {
 				
@@ -193,3 +192,16 @@
 	});
 		
 </script>
+<style>
+	.cal_modal {
+		margin: 40px 10px;
+		padding: 0;
+		font-size: 14px;
+		
+	}
+	
+	#calendar {
+		max-width: 1100px;
+		margin: 0 auto;
+	}
+</style>

@@ -7,14 +7,14 @@
                 <div class="form-group">
                     <label for="title">Title</label>
                     <!-- 在 value 属性中指定文本框的初始值为旧的内容，即 article 对象中的 title 字段 -->
-                    <input type="text" class="form-control col-4" id="title" name="title" value="{{ article.title }}">
+                    <input type="text" class="form-control" id="title" name="title" value="{{ article.title }}" required>
                 </div>
                 
                 <!-- 文章标签 -->
                 <div class="form-group">
                     <label for="tags">Tags</label>
                     <input type="text" 
-                        class="form-control col-4" 
+                        class="form-control" 
                         id="tags" 
                         name="tags" 
                         value="{{ tags }}"
@@ -28,7 +28,7 @@
                 
                 <div class="form-group">
                     <label for="column">Column</label>
-                    <select class="form-control col-4" 
+                    <select class="form-control" 
                         id="column" 
                         name="column"
                     >
@@ -47,9 +47,15 @@
                 <div class="form-group">
                     <label for="body">Main text</label>
                     <!-- 文本域不需要 value 属性，直接在标签体中嵌入数据即可 -->
-                    <textarea type="text" class="form-control" id="body" name="body" rows="12">{{ article.body }}</textarea>
+                    <textarea type="text" class="form-control" id="body" name="body" rows="12" required>{{ article.body }}</textarea>
+
                 </div>
                 <button type="submit" class="btn btn-primary">Save changes</button>
             </form>
 
 {% endblock content %}
+{% block script %}
+<script>
+    $(".django-ckeditor-widget").removeAttr('style');
+</script>
+{% endblock script %}

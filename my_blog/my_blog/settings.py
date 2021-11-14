@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'users',
     'comment',
     'taggit',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [
@@ -161,3 +162,26 @@ STATICFILES_DIRS = (
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 LOGIN_REDIRECT_URL = '/'
+CKEDITOR_CONFIGS = {
+  'default': {
+    'width':'auto',
+    'toolbar':'full',
+    'extraPlugins':','.join([
+      
+    'uploadimage', # the upload image feature
+        # your extra plugins here
+    'div',
+    'autolink',
+    'autoembed',
+    'embedsemantic',
+    'autogrow',
+    # 'devtools',
+    'widget',
+    'lineutils',
+    'clipboard',
+    'dialog',
+    'dialogui',
+    'elementspath',
+    'codesnippet']),
+  }
+}

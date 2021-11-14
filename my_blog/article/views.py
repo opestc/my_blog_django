@@ -111,7 +111,7 @@ def article_detail(request, id):
     article.total_views += 1
   article.save(update_fields=['total_views'])
   article.body = md.convert(article.body)
-  m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
+  m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S) #
   toc = m.group(1) if m is not None else ''
   context = {
     'article':article, 
@@ -124,6 +124,7 @@ def article_detail(request, id):
 
 @login_required(login_url='/user/login')
 def article_create(request):
+  events=Event.objects.all()
   if request.method == "POST":
     article_post_form = ArticlePostForm(request.POST, request.FILES)
     if article_post_form.is_valid():
@@ -162,12 +163,14 @@ def article_safe_delete(request, id):
 @login_required(login_url='/user/login/')
 def article_update(request, id):
   article = ArticlePost.objects.get(id=id)
+  # ini = {'body': article.body}
   events=Event.objects.all()
   if request.user != article.author:
     messages.error(request,"You have no permission.")
     return redirect("article:article_detail", id=id)
   if request.method == "POST":
     article_post_form = ArticlePostForm(request.POST, request.FILES)
+    # article_post_form = ArticlePostForm(initial=ini)
     if article_post_form.is_valid():
       article.title = request.POST['title']
       article.body = request.POST['body']
