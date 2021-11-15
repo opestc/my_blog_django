@@ -2,20 +2,19 @@
 		var calendarEl = document.getElementById('calendar');
 		
 		var calendar = new FullCalendar.Calendar(calendarEl, {
+			height: 'auto',
 			initialView: 'dayGridMonth',
 			headerToolbar: {
 				left: 'prev,next today',
 				center: 'title',
 				right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
 			},
-			height: 'auto',
 			navLinks: true, // can click day/week names to navigate views
-			editable: true,
-			dayMaxEvents: true,
 			selectable: true,
 			selectMirror: true,
 			nowIndicator: true,
-			
+			editable: true,
+			dayMaxEvents: true,
 			
 			eventClick: function(arg) {
 				
@@ -73,8 +72,14 @@
 				success : function(response) {
 					frm[0].reset();
 					console.log(response);
-					calendar.addEvent(response);
-					console.log('success');
+					if (response.error) {
+						alert(response.error);
+					}
+					else {
+						calendar.addEvent(response);
+						console.log('success');
+					}
+
 				},
 				// handle a non-successful response
 				error : function(xhr,errmsg,err) {

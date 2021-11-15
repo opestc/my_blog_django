@@ -167,7 +167,7 @@ CKEDITOR_CONFIGS = {
     'width':'auto',
     'toolbar':'full',
     'extraPlugins':','.join([
-      
+    'prism',  
     'uploadimage', # the upload image feature
         # your extra plugins here
     'div',

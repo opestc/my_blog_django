@@ -1,7 +1,7 @@
 .sidenav {
     position: fixed;
     height:calc(100vh - 50px);
-    z-index:1;
+    z-index:9999;
     top:0;
     left: -200px;
     width: 200px;
