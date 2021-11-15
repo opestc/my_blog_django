@@ -13,21 +13,21 @@
     <title>{% block title %}{% endblock %}</title>
     <!-- 引入bootstrap的css文件 -->
     {% bootstrap_css %}
-    {% bootstrap_javascript %}
     <link rel="stylesheet" href="{% static 'md_css/monokai.css' %}">
     <link 
         rel="stylesheet" 
         href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css"
     >
-    <link href="{% static 'plugins/fullcalendar/main.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'plugins/fullcalendar/main.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/sidebar.css' %}">
+    {% bootstrap_javascript %}
     <script src="{% static 'ckeditor/ckeditor/plugins/prism/lib/prism/prism_patched.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'plugins/prism/prism.css' %}">
-    <script src="{% static 'sticky_sidebar/jquery.sticky-sidebar.min.js' %}"></script>
+    <!--script src="{% static 'sticky_sidebar/jquery.sticky-sidebar.min.js' %}"></script>-->
     <script src="{% static 'js/jquery.bootstrap.modal.forms.js' %}"></script>
     <script src="{% static 'layer/layer.js' %}"></script>
-    <script src="{% static 'plugins/fullcalendar/main.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{% static 'plugins/fullcalendar/main.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js" integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js" integrity="sha512-RdSPYh1WA6BF0RhpisYJVYkOyTzK4HwofJ3Q7ivt/jkpW6Vc8AurL1R+4AUcvn9IwEKAPm/fk7qFZW3OuiUDeg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     

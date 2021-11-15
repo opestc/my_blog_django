@@ -110,14 +110,28 @@
 
 <script>
   function confirm_safe_delete() {
-    layer.open({
-      title:"Warning",
-      content:"Are you sure to delete this article?",
-      yes: function(index,layero) {
-         $('form#safe_delete button').click();
-         layer.close(index);
+    bootbox.confirm({
+      title: "Warning",
+      message: "Are you sure to delete this article?",
+      buttons: {
+        cancel: {label: 'No',className: 'btn-secondary'},
+        confirm: {label: 'Yes',className: 'btn-danger'}
+      },
+      callback: function (result) {
+        if (result) {
+          $('form#safe_delete button').click();
+        }
       }
     })
+    
+//    layer.open({
+//      title:"Warning",
+//      content:"Are you sure to delete this article?",
+//      yes: function(index,layero) {
+//         $('form#safe_delete button').click();
+//         layer.close(index);
+//      }
+//    })
   }
 </script>
 {% endblock content %}

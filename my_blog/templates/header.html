@@ -18,14 +18,15 @@
         <form class="form-inline" >
           <label class="sr-only">content</label>
           <input type="text" 
-            class="form-control mr-sm-2" 
+            class="form-control" 
             name="search" 
             placeholder="Search" 
             required
           />
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
           
         </form>
+      
         <ul class="navbar-nav ml-auto">
 
         <!-- Django的 if 模板语句 -->
@@ -59,13 +60,26 @@
         <script>
           function user_delete() {
             // 调用layer弹窗组件
-            layer.open({
+//            layer.open({
+//              title: "Warning",
+//              content: "Are you sure to delete this user?",
+//              yes: function(index, layero) {
+//                $('form#user_delete button').click();
+//                layer.close(index);
+//              },
+//            })
+            bootbox.confirm({
               title: "Warning",
-              content: "Are you sure to delete this user?",
-              yes: function(index, layero) {
-                $('form#user_delete button').click();
-                layer.close(index);
+              message: "Are you sure to delete this user?",
+              buttons: {
+                cancel: {label: 'No',className: 'btn-secondary'},
+                confirm: {label: 'Yes',className: 'btn-danger'}
               },
+              callback: function (result) {
+                if (result) {
+                  $('form#user_delete button').click();
+                }
+              }
             })
           }
         </script>

@@ -17,9 +17,6 @@
 							var token = '{{csrf_token}}';
 							var URL ="{% url 'article:event_delete' %}";
 						</script>
-
-						<script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.7/fullcalendar.min.js"></script>
-						
 						<div id='calendar'></div>
 
 					</div>
@@ -103,13 +100,13 @@
 		var calendarEl = document.getElementById('calendar');
 		
 		var calendar = new FullCalendar.Calendar(calendarEl, {
-			height: 'auto',
 			initialView: 'dayGridMonth',
 			headerToolbar: {
 				left: 'prev,next today',
 				center: 'title',
 				right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
 			},
+			height: 'auto',
 			navLinks: true, // can click day/week names to navigate views
 			selectable: true,
 			selectMirror: true,
@@ -154,8 +151,12 @@
 				],
 				
 			});
-			
-		calendar.render();
+			$('#ShowCalendar').on('shown.bs.modal', function () {
+				calendar.render();
+				bootbox.alert({message: "Load successfully",size: 'small'});
+			});	
+		//calendar.render();
+		//console.log("calendar loaded success");
 		var frm = $('#AddEventForm');
 		frm.on('submit', function(event){
 			event.preventDefault();
@@ -194,6 +195,7 @@
 </script>
 {% endblock script %}
 {% block style %}
+
 <style>
 	.cal_modal {
 		margin: 40px 10px;

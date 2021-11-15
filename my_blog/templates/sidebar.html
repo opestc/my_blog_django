@@ -1,4 +1,5 @@
-<style>
+{% load static %}
+<!--style>
   .sidebar{
     will-change: min-height;
   }
@@ -8,12 +9,12 @@
     transform: translate3d(0, 0, 0);
     will-change: position, transform;
   }
-  
-  
-</style>
-
+</style>-->
+<!--div id="sidebar" class="sidebar"> -->
+  <!--div class="sidebar__inner"> -->
 <h3 class="mt-4 mb-4">Contents</h3>
 <hr>
+<div id='content'>
   {% if toc %}
   <p>
     {{ toc|safe }} 
@@ -23,12 +24,12 @@
     <p><a style="color: black;" href="{% url 'article:article_list' %}?column={{ column.id }}">{{ column }}</a></p>
   {% endfor %}
   {% endif %}
-  <hr>
+</div>
+<hr>
 {% include 'article/cal_modal.html' %}
 
-
-
 {% block script %}
+
 <script type="text/javascript">
   $('#sidebar').stickySidebar({
     topSpacing: 20,
