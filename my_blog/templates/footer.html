@@ -6,6 +6,7 @@
 </div>
 <script>
   var template = document.getElementById('content').outerHTML;
+  var searchBar = document.getElementById('search').outerHTML;
   var element = eval('`' + template + '`');
 //  console.log(element);
 //  console.log(typeof(element));
@@ -45,6 +46,10 @@
               <a class="nav-link" href="{% url 'users:logout' %}"><i class="fas fa-sign-out-alt"></i></a>
             </li>
             {% endif %}
+            <li class="nav-item">
+              <button type="button" id="ShowSearchBar" class="btn bbtn-link">
+                <i class="fas fa-search"></i></button>
+            </li>&nbsp;
          </ul>
          
           <span style="font-size: 14px; color: grey; display: inline-block; float: none;text-align: right;">
@@ -70,10 +75,23 @@
   $("#ShowContent").click(function () {
     //console.log(element);
     var dialog = bootbox.dialog({
-      title: "Content",
-      message: template
+      title: "Contents",
+      message: template,
+      size: 'small'
     })
     dialog.on('click', function(){
+      dialog.modal('hide');
+    })    
+  })
+  
+  $("#ShowSearchBar").click(function () {
+    //console.log(element);
+    var dialog = bootbox.dialog({
+      message: searchBar,
+      size: 'large',
+      closeButton: false
+    })
+    dialog.on('submit', function(){
       dialog.modal('hide');
     })    
   })

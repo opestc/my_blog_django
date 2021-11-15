@@ -15,18 +15,16 @@
         </li>
         {% endfor %}
       </ul>
-        <form class="form-inline" >
-          <label class="sr-only">content</label>
-          <input type="text" 
-            class="form-control" 
-            name="search" 
-            placeholder="Search" 
-            required
-          />
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
-          
-        </form>
-      
+<div style="display:none;">
+      <form id="search">
+        <div class="input-group">
+          <input type="text" class="form-control" name="search" placeholder="Search" aria-label="Recipient's username">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+          </div>
+        </div>
+      </form>   
+</div>
         <ul class="navbar-nav ml-auto">
 
         <!-- Django的 if 模板语句 -->
