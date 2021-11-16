@@ -56,12 +56,11 @@ class ArticlePost(models.Model):
   
   def __str__(self):
     return self.title
+  
   @property
   def get_absolute_url(self):
     return reverse('article:article_detail', args=[self.id])
-#  @property
-#  def get_html_url(self):
-#    return reverse('article:article_detail', args=[self.id])
+
 
 class Banner(models.Model):
   title=models.CharField('标题',max_length=50)

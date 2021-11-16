@@ -16,6 +16,7 @@ from bootstrap_modal_forms.generic import BSModalLoginView
 from django.urls import reverse_lazy
 import markdown, re, calendar, json
 from dateutil import tz
+import time
 
 columns = ArticleColumn.objects.all()
 mytz = tz.gettz('Asia/Shanghai')
@@ -294,13 +295,18 @@ def search(request):
     Q(body__icontains=q)
   )
   for article in search_articles:
-    results += f'<h4><b><a href="{article.get_absolute_url}" style="color: black;" >{article.title}</a></b> &nbsp;&nbsp;&nbsp;'
-    if article.column:
-      results += f'<span class="badge badge-primary">{article.column}</span>&nbsp;&nbsp;&nbsp;'
+    results += f'<hr><h4><b><a href="{article.get_absolute_url}" style="color: black;" target="_blank">{article.title}</a></b> &nbsp;&nbsp;&nbsp;'
+
     if article.tags:
       for tag in article.tags.all():
         results += f'<span class="badge badge-secondary">{tag.name}</span>&nbsp;'
-    results += f'</h4><p>{article.body}</p><hr>'
+    results += f'</h4><p>{article.body}</p>'
+    if article.column:
+      results += f'<span class="badge badge-primary">{article.column}</span>&nbsp;&nbsp;&nbsp;'
+    created = str(article.created.replace(microsecond=0))
+    t = time.strptime(created, '%Y-%m-%d %H:%M:%S%z')
+    t = time.strftime('%Y-%m-%d %H:%M:%S',t)
+    results += f'<span>Created at: &nbsp;{t}</span>'
     
   return HttpResponse(
       json.dumps({'error_msg':error_msg,'results':results}),

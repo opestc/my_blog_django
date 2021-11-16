@@ -93,7 +93,13 @@
       message: searchBar,
       size: 'large',
       closeButton: false,
-      onEscape: true
+      onEscape: true,
+      scrollable: true,
+      buttons: {
+        Close:{
+          className: 'btn-primary'
+        }
+      }
     });
     var frm2 = dialog.find('form');
     dialog.on('shown.bs.modal', function(){
@@ -115,36 +121,25 @@
       success : function(response) {
         frm2[0].reset();
         console.log(response);
-        var hint='<hr>';
+        var hint='';
         if (response.error_msg) {
+          hint += '<br>';
           searchResults.innerHTML = response.error_msg;
         }
         else {
-          hint='<p class="mt-4"><strong>Search results:</strong></p>'+hint;
+          hint +='<p class="mt-4"><strong>Search results:</strong></p>';
           searchResults.innerHTML = response.results;
-          console.log(searchResults);
         }
-        //$('.modal-body').html(searchBar+hint+searchResults.outerHTML);
-        dialog = bootbox.dialog({
-          message: searchBar+hint+searchResults.outerHTML,
-          size: 'large',
-          closeButton: false,
-          onEscape: true
+        dialog.find('.modal-body').html(searchBar+hint+searchResults.outerHTML);
+
+        frm2 = dialog.find('form');
+        frm2.on('submit', function(e){
+          console.log("submitted");
+          e.preventDefault();
+          search_results();
+          console.log('done');
         });
-        frm2 = dialog.find('form');       
-        dialog.on('shown.bs.modal', function(){
-          console.log("working");
-          console.log(searchBar);
-          frm2.on('submit', function(e){
-            console.log("submitted");
-            e.preventDefault();
-            search_results();
-            console.log('done');
-          });
-        });
-        dialog.on('submit', function(){
-          dialog.modal('hide');
-        });  
+
       },
       // handle a non-successful response
       error : function(xhr,errmsg,err) {
