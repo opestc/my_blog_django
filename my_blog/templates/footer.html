@@ -7,6 +7,7 @@
 <script>
   var template = document.getElementById('content').outerHTML;
   var searchBar = document.getElementById('search').outerHTML;
+  var searchResults = document.getElementById('search_results');
   var element = eval('`' + template + '`');
 //  console.log(element);
 //  console.log(typeof(element));
@@ -85,14 +86,71 @@
   })
   
   $("#ShowSearchBar").click(function () {
-    //console.log(element);
+//    console.log(element);
+//    var frm = $('#search');
+//    var frm1 = $('#search_results');
     var dialog = bootbox.dialog({
       message: searchBar,
       size: 'large',
-      closeButton: false
-    })
-    dialog.on('submit', function(){
-      dialog.modal('hide');
-    })    
+      closeButton: false,
+      onEscape: true
+    });
+    var frm2 = dialog.find('form');
+    dialog.on('shown.bs.modal', function(){
+      console.log("working");
+      console.log(searchBar);
+      frm2.on('submit', function(e){
+        console.log("submitted");
+        e.preventDefault();
+        search_results();
+        console.log('done');
+      });
+    });
+    function search_results () {
+    $.ajax({
+      url : frm2.attr('action'),// the endpoint
+      type : frm2.attr('method'),// http method
+      data : frm2.serialize(), // data sent with the request
+      // handle a successful response
+      success : function(response) {
+        frm2[0].reset();
+        console.log(response);
+        var hint='<hr>';
+        if (response.error_msg) {
+          searchResults.innerHTML = response.error_msg;
+        }
+        else {
+          hint='<p class="mt-4"><strong>Search results:</strong></p>'+hint;
+          searchResults.innerHTML = response.results;
+          console.log(searchResults);
+        }
+        //$('.modal-body').html(searchBar+hint+searchResults.outerHTML);
+        dialog = bootbox.dialog({
+          message: searchBar+hint+searchResults.outerHTML,
+          size: 'large',
+          closeButton: false,
+          onEscape: true
+        });
+        frm2 = dialog.find('form');       
+        dialog.on('shown.bs.modal', function(){
+          console.log("working");
+          console.log(searchBar);
+          frm2.on('submit', function(e){
+            console.log("submitted");
+            e.preventDefault();
+            search_results();
+            console.log('done');
+          });
+        });
+        dialog.on('submit', function(){
+          dialog.modal('hide');
+        });  
+      },
+      // handle a non-successful response
+      error : function(xhr,errmsg,err) {
+      }
+    });
+    return false;
+  };
   })
 </script>

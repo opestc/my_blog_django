@@ -15,4 +15,5 @@ urlpatterns= [
   path('calendar/event/edit/<int:event_id>', views.event, name='event_edit'),
   path('events/', views.event_modal, name='event_modal'),
   path('event-delete/', views.event_delete, name='event_delete'),
+  path('search/', views.search, name='search'),
 ]

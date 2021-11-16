@@ -1,0 +1,89 @@
+{% load bootstrap4 %}
+<!DOCTYPE html>
+<link 
+	rel="stylesheet" 
+	href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css"
+>
+<div class="row mt-2">
+	<!-- 文章内容 -->
+
+	{% if error_msg %}
+	<hr>
+	<p>{{ error_msg }}</p>
+	{% else %}
+	{% for article in search_results %}
+	<hr>
+	{% if article.avatar %}
+	<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+		<img src="{{ article.avatar.url }}" 
+			alt="avatar" 
+			style="max-width:100%; border-radius: 20px"
+		>
+	</div>
+	{% endif %}
+	<div class="col">
+		<!-- 栏目 -->
+		{% if article.column %}
+		<a role="button" href="{% url 'article:article_list' %}?column={{ article.column.id }}" 
+			class="btn btn-sm mb-2 btn-success"
+		>
+			
+			{{ article.column }}
+			
+		</a>
+		{% endif %}
+		<!-- 标题 -->
+		<h4>
+			<b>
+				<a href="{% url 'article:article_detail' article.id %}"
+					style="color: black;" target="_blank"
+				>
+					{{ article.title }}
+				</a>
+			</b>
+			
+			<!-- 标签 -->
+			<span>
+				{% for tag in article.tags.all %}
+				{% if tag.name  %}
+				<a href="{% url 'article:article_list' %}?tag={{ tag }}"
+					class="badge badge-secondary" 
+				>
+					{{ tag }}
+				</a>
+				{% endif %}
+				{% endfor %}
+			</span>
+		</h4>
+		
+		
+		<!-- 摘要 -->
+		<div>
+			<p style="color: gray;">
+				{{ article.body|safe }}
+			</p>
+		</div>
+		<!-- 注脚 -->
+		<p>
+			<!-- 附加信息 -->
+			{% if user.is_authenticated %}
+			<span>
+				<i class="fas fa-book-reader"></i>
+				{{ article.total_views }}&nbsp;&nbsp;&nbsp;
+			</span>
+			
+			<span>
+				<i class="far fa-clock"></i>
+				{{ article.created|date:'Y-m-d' }}&nbsp;&nbsp;&nbsp;
+			</span>
+			{% endif %}
+			<span>
+				<i class="fas fa-edit"></i>
+				{{ article.updated|date:'Y-m-d' }}
+			</span>
+		</p>
+	</div>
+	{% endfor %}
+	{% endif %}
+
+</div>

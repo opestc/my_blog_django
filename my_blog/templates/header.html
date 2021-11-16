@@ -15,16 +15,7 @@
         </li>
         {% endfor %}
       </ul>
-<div style="display:none;">
-      <form id="search">
-        <div class="input-group">
-          <input type="text" class="form-control" name="search" placeholder="Search" aria-label="Recipient's username">
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
-          </div>
-        </div>
-      </form>   
-</div>
+
         <ul class="navbar-nav ml-auto">
 
         <!-- Django的 if 模板语句 -->
@@ -120,7 +111,17 @@
 
 
 </div>
-
+<div class="container" style="display:none;">
+  <form id="search" method="get" action="{% url 'article:search' %}">
+    <div class="input-group">
+      <input type="text" class="form-control" name="search" placeholder="Search">
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+      </div>
+    </div>
+  </form>
+  <div id='search_results'></div>
+</div>
 <div id="sideBar" class="sidenav">
   <br>
   <h3 >Contents</h3>

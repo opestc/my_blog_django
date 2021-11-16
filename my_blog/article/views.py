@@ -283,3 +283,27 @@ def event_delete(request):
     event = Event.objects.get(id=id)
     event.delete()
   return redirect("article:calendar")
+
+def search(request):
+  q=request.GET.get('search')
+  error_msg, results = '', ''
+  if not q:
+    error_msg = 'Please input keywords.'
+  search_articles = ArticlePost.objects.filter(
+    Q(title__icontains=q) |
+    Q(body__icontains=q)
+  )
+  for article in search_articles:
+    results += f'<h4><b><a href="{article.get_absolute_url}" style="color: black;" >{article.title}</a></b> &nbsp;&nbsp;&nbsp;'
+    if article.column:
+      results += f'<span class="badge badge-primary">{article.column}</span>&nbsp;&nbsp;&nbsp;'
+    if article.tags:
+      for tag in article.tags.all():
+        results += f'<span class="badge badge-secondary">{tag.name}</span>&nbsp;'
+    results += f'</h4><p>{article.body}</p><hr>'
+    
+  return HttpResponse(
+      json.dumps({'error_msg':error_msg,'results':results}),
+      content_type="application/json") 
+    
+  
