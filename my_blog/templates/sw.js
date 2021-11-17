@@ -4,6 +4,7 @@ self.addEventListener('push', function (event) {
     // Other formats are supported (ArrayBuffer, Blob, JSON), check out the documentation
     // on https://developer.mozilla.org/en-US/docs/Web/API/PushMessageData.
     const eventInfo = event.data.text();
+    console.log(eventInfo);
     const data = JSON.parse(eventInfo);
     const head = data.head || 'New Notification 🕺🕺';
     const body = data.body || 'This is default content. Your notification didn\'t have one 🙄🙄';
