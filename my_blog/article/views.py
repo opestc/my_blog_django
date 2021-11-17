@@ -20,6 +20,7 @@ from webpush import send_user_notification
 import markdown, re, calendar, json, time
 from dateutil import tz
 from django.conf import settings
+from django.http import JsonResponse
 columns = ArticleColumn.objects.all()
 mytz = tz.gettz('Asia/Shanghai')
 
