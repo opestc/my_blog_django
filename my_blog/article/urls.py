@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-
+from django.views.generic import TemplateView
 app_name = 'article'
 
 urlpatterns= [
@@ -16,4 +16,8 @@ urlpatterns= [
   path('events/', views.event_modal, name='event_modal'),
   path('event-delete/', views.event_delete, name='event_delete'),
   path('search/', views.search, name='search'),
+  path('message', views.message, name='message'),
+  path('send_push/', views.send_push, name='send_push'),
+  #path('sw.js/', TemplateView.as_view(template_name='sw.js', content_type='application/x-javascript'))
+  
 ]

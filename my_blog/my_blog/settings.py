@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
 from pathlib import Path
 import os
 
@@ -26,7 +25,7 @@ SECRET_KEY = 'django-insecure-0wf6gd0!7ji-!ths=kks8=*pdqy2-)i2&xkzu(4xzlm!xk056_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['opestc.pythonanywhere.com','127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -47,6 +46,7 @@ INSTALLED_APPS = [
     'comment',
     'taggit',
     'ckeditor',
+    'webpush',
 ]
 
 MIDDLEWARE = [
@@ -109,7 +109,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+WEBPUSH_SETTINGS = {
+  "VAPID_PUBLIC_KEY": "BK21QvpY_U3M3NvR8ZPOrpXzyqntrveTUfZ1B2_c9Qeh0W9gvI88SldKh47bYCeuyos6RQoH1fjMoCpB_xtkhq0",
+  "VAPID_PRIVATE_KEY": "LEZFzFwAT3SNjgVZiAQvYftm2HKiGbgyBxCNFHAS4_4",
+  "VAPID_ADMIN_EMAIL": "uestcliyu@163.com"
+}
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
