@@ -9,10 +9,10 @@ const registerSw = async () => {
 };
 
 const initialiseState = (reg) => {
-    if (!reg.showNotification) {
-        showNotAllowed('Showing notifications isn\'t supported ☹️😢');
-        return
-    }
+//    if (!reg.showNotification) {
+//        showNotAllowed('Showing notifications isn\'t supported ☹️😢');
+//        return
+//    }
     if (Notification.permission === 'denied') {
         showNotAllowed('You prevented us from showing notifications ☹️🤔');
         return
