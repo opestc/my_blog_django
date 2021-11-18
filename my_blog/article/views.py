@@ -314,7 +314,6 @@ def search(request):
       content_type="application/json") 
     
 @require_POST
-@csrf_exempt
 def send_push(request):
   try:
     body = request.body
