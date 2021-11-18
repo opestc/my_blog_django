@@ -13,6 +13,9 @@ pushForm.addEventListener('submit', async function (e) {
     console.log(head+':'+body);
     const meta = document.querySelector('meta[name="user_id"]');
     const id = meta ? meta.content : null;
+    
+    let csrfToken = '{{ csrf_token }}'
+
 
     if (head && body && id) {
         button.innerText = 'Sending...';
@@ -21,8 +24,10 @@ pushForm.addEventListener('submit', async function (e) {
         const res = await fetch('/send_push/', {
             method: 'POST',
             body: JSON.stringify({head, body, id}),
+            credentials : 'include',
             headers: {
-                'content-type': 'application/json'
+                'content-type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
             }
         });
         if (res.status === 200) {

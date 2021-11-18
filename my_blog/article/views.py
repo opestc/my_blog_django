@@ -15,7 +15,7 @@ from django.utils.safestring import mark_safe
 from bootstrap_modal_forms.generic import BSModalLoginView
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_GET, require_POST
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from webpush import send_user_notification
 import markdown, re, calendar, json, time
 from dateutil import tz
@@ -314,6 +314,7 @@ def search(request):
       content_type="application/json") 
     
 @require_POST
+@csrf_exempt
 def send_push(request):
   try:
     body = request.body
