@@ -25,7 +25,7 @@ urlpatterns = [
     path('password-reset/', include('password_reset.urls')),
     path('comment/', include('comment.urls', namespace='comment')),
     path('webpush/', include('webpush.urls')),
-    path('sw.js', TemplateView.as_view(template_name='sw.js', content_type='application/x-javascript'))
+    #path('sw.js', TemplateView.as_view(template_name='sw.js', content_type='application/x-javascript'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

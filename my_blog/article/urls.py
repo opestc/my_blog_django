@@ -18,6 +18,5 @@ urlpatterns= [
   path('search/', views.search, name='search'),
   path('message', views.message, name='message'),
   path('send_push/', views.send_push, name='send_push'),
-  #path('sw.js/', TemplateView.as_view(template_name='sw.js', content_type='application/x-javascript'))
   
 ]

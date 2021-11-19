@@ -336,4 +336,6 @@ def message(request):
   webpush_settings = getattr(settings, 'WEBPUSH_SETTINGS', {})
   vapid_key = webpush_settings.get('VAPID_PUBLIC_KEY')
   user = request.user
-  return render(request, 'message.html', {user: user, 'vapid_key': vapid_key, 'columns':columns})
+  webpush = {"group": "test" }
+  
+  return render(request, 'message.html', {'user': user, 'vapid_key': vapid_key, 'webpush':webpush,'columns':columns})
