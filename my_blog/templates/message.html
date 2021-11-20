@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 {% load bootstrap4 %}
 {% load static %}
+{% load webpush_notifications %}
 {% block title %}Message us{% endblock %}
 {% block content %}
 
-
+{% webpush_button with_class="btn btn-primary" %}
 	<form id="send-push__form" action="{% url 'article:send_push' %}" >
 
 		<h3 class="header">Send us a message</h3>

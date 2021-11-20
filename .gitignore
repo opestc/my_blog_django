@@ -9,4 +9,4 @@ db.sqlite3
 ._*
 .fseventsd
 .Spotlight-V100
-
+.ipynb_checkpoints/
