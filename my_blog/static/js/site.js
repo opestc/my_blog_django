@@ -10,7 +10,7 @@ pushForm.addEventListener('submit', async function (e) {
 
     const head = input.value;
     const body = textarea.value;
-    console.log(head+':'+body);
+//    console.log(head+':'+body);
     const meta = document.querySelector('meta[name="user_id"]');
     const id = meta ? meta.content : null;
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;

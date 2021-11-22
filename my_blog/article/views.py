@@ -286,6 +286,7 @@ def event_delete(request):
     event.delete()
   return redirect("article:calendar")
 
+# design search results
 def search(request):
   q=request.GET.get('search')
   error_msg, results = '', ''
@@ -312,7 +313,8 @@ def search(request):
   return HttpResponse(
       json.dumps({'error_msg':error_msg,'results':results}),
       content_type="application/json") 
-    
+
+# send push notification
 @require_POST
 @csrf_exempt
 def send_push(request):
@@ -337,4 +339,4 @@ def message(request):
   vapid_key = webpush_settings.get('VAPID_PUBLIC_KEY')
   user = request.user
   webpush = {"group": 'test' }
-  return render(request, 'message.html', {'user': user, 'vapid_key': vapid_key, 'webpush':webpush,'columns':columns})
+  return render(request, 'message.html', {'user': user, 'vapid_key': vapid_key, 'columns':columns})

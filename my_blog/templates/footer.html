@@ -51,6 +51,10 @@
               <button type="button" id="ShowSearchBar" class="btn bbtn-link">
                 <i class="fas fa-search"></i></button>
             </li>&nbsp;
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'chat:index' %}">
+                <i class="fas fa-sms"></i></a>
+            </li>&nbsp;
          </ul>
          
           <span style="font-size: 14px; color: grey; display: inline-block; float: none;text-align: right;">
@@ -101,10 +105,13 @@
         }
       }
     });
+
     var frm2 = dialog.find('form');
+    var bar = dialog.find('input');
     dialog.on('shown.bs.modal', function(){
-      console.log("working");
-      console.log(searchBar);
+      bar.focus();
+      console.log("Waiting");
+      //console.log(searchBar);
       frm2.on('submit', function(e){
         console.log("submitted");
         e.preventDefault();
@@ -120,7 +127,7 @@
       // handle a successful response
       success : function(response) {
         frm2[0].reset();
-        console.log(response);
+        //console.log(response);
         var hint='';
         if (response.error_msg) {
           hint += '<br>';

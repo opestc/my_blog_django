@@ -111,10 +111,12 @@
 
 
 </div>
+
+<!--to show search bar and search results on bootbox-->
 <div class="container" style="display:none;">
   <form id="search" method="get" action="{% url 'article:search' %}">
     <div class="input-group">
-      <input type="text" class="form-control" name="search" placeholder="Search">
+      <input id="search-bar" type="text" class="form-control" name="search" placeholder="Search">
       <div class="input-group-append">
         <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
       </div>

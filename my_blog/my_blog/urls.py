@@ -18,6 +18,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from chat.views import pushRedis
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('article.urls', namespace='article')),
@@ -25,6 +26,8 @@ urlpatterns = [
     path('password-reset/', include('password_reset.urls')),
     path('comment/', include('comment.urls', namespace='comment')),
     path('webpush/', include('webpush.urls')),
+    path('chat/', include('chat.urls',namespace='chat')),
+    path("push", pushRedis, name="push"),
     #path('sw.js', TemplateView.as_view(template_name='sw.js', content_type='application/x-javascript'))
 ]
 

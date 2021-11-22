@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'taggit',
     'ckeditor',
     'webpush',
+    'channels',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -189,3 +191,19 @@ CKEDITOR_CONFIGS = {
     'codesnippet']),
   }
 }
+
+ASGI_APPLICATION = "my_blog.asgi.application"
+WSGI_APPLICATION = 'my_blog.wsgi.application'
+CHANNEL_LAYERS = {
+  "default": {
+    "BACKEND": "channels.layers.InMemoryChannelLayer"
+  }
+}
+#CHANNEL_LAYERS = {
+#  "default": {
+#    "BACKEND": "channels_redis.core.RedisChannelLayer",
+#    "CONFIG": {
+#      "hosts": [("127.0.0.1", 6379)],
+#    },
+#  },
+#}
