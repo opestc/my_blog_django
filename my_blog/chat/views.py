@@ -19,9 +19,6 @@ def index(request):
 
 def room(request, room_name):
 	user_name = request.session['user_name']
-	data = request.GET.copy()
-	data['room'] = room_name
-	data['user'] = request.session['user_name']
 	return render(request, 'chat/room.html', {
 		'room_name': room_name, 'user_name':user_name, 'columns':columns
 	})
@@ -30,46 +27,25 @@ def pushRedis(request):
 	room = request.GET.get("room")
 	user = request.GET.get("user")
 	
-	if room not in users.keys():
-		users[room]={}
-	if user not in users[room]:	
-		users[room][user] = 0
-	user_number = 0
-	for key,value in users.items():
-		if key == room:
-			for num in value.values():
-				user_number += num
-	user_conn = len(consumers.ChatConsumer.chats[room])
-	
+	users = consumers.ChatConsumer.chats[room]
+	user_num, user_conn = len(users), 0
+	for user in users:
+		user_conn += len(users[user])
 
-	print('room: ' + room + ' user: ' + user + ' connections: ' + str(user_conn))
-	if request.GET.get("enter") and user_number < user_conn:
-		users[room][user] += 1
-	if request.GET.get("leave"):
-		users[room][user] -= 1
-		if users[room][user] <= 0:
-			del users[room][user]
-		if not users[room]:
-			del users[room]
+	#print('room: ' + room + ' user: ' + user + ' connections: ' + str(user_conn))
 
-	def push():
+	def push(msg='test'):
 		channel_layer = get_channel_layer()
-		if request.GET.get("number"):
+		if request.GET.get("user_conn"):
 			async_to_sync(channel_layer.group_send) (
 				room,
-				{"type": "push.message", "number": user_conn, "room_name": room}
+				{"type": "push.message", "user_conn": user_conn, "room_name": room}
 			)
-		elif request.GET.get("enter"):
-			msg = user + " joined room " + room
-			async_to_sync(channel_layer.group_send) (
-			room,
-			{"type": "push.message", "message": msg, "room_name": room}	)
-		elif request.GET.get("leave"):
-			msg = user + " left room " + room
+		else:
 			async_to_sync(channel_layer.group_send) (
 			room,
 			{"type": "push.message", "message": msg, "room_name": room}
 		)
 	push()
-	return JsonResponse({"total_connection": user_conn, "users": users})
+	return JsonResponse({"total_connection": user_conn, "users": list(users)})
 	

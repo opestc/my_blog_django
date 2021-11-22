@@ -9,12 +9,11 @@ https://docs.djangoproject.com/en/3.2/howto/deployment/wsgi/
 
 import os, django
 from django.core.wsgi import get_wsgi_application
-from dj_static import Cling
 from channels.http import AsgiHandler
 from channels.routing import ProtocolTypeRouter
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'my_blog.settings')
-django.setup()
+#django.setup()
 
 #application = Cling(get_wsgi_application())
 application = ProtocolTypeRouter({

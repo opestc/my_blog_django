@@ -11,19 +11,30 @@ class ChatConsumer(WebsocketConsumer):
 	def connect(self):
 		self.room_name = self.scope['url_route']['kwargs']['room_name']
 		self.room_group_name = 'chat_%s' % self.room_name
+		self.user_name = self.scope["session"]["user_name"] # username in session
 		# Join room group
 		async_to_sync(self.channel_layer.group_add)(
 			self.room_group_name,
 			self.channel_name
 		)
-		if not ChatConsumer.chats[self.room_name]:
-			ChatConsumer.chats[self.room_name] = set([self])
-		else:
-			ChatConsumer.chats[self.room_name].add(self)
-#		except:
-#			ChatConsumer.chats[self.room_name] = set([self])
-		print(ChatConsumer.chats)
+		if self.room_name not in ChatConsumer.chats:
+			ChatConsumer.chats[self.room_name]={}
+		if self.user_name not in ChatConsumer.chats[self.room_name]:	
+			ChatConsumer.chats[self.room_name][self.user_name] = 0
+		try:
+			ChatConsumer.chats[self.room_name][self.user_name].add(self)
+		except:
+			ChatConsumer.chats[self.room_name][self.user_name] = set([self])
+			
+#		print(ChatConsumer.chats)
 		self.accept()
+		async_to_sync(self.channel_layer.group_send)(
+			self.room_group_name,
+			{
+				'type': 'chat_message',
+				'message': '@%s joined room %s' % (self.user_name, self.room_name),
+			}
+		)
 		
 	def disconnect(self, close_code):
 		# Leave room group
@@ -31,34 +42,43 @@ class ChatConsumer(WebsocketConsumer):
 			self.room_group_name,
 			self.channel_name
 		)
-		ChatConsumer.chats[self.room_name].remove(self)
-		self.close()
+		ChatConsumer.chats[self.room_name][self.user_name].remove(self)
+		
+		if not ChatConsumer.chats[self.room_name][self.user_name]:
+			del ChatConsumer.chats[self.room_name][self.user_name]
+		if not ChatConsumer.chats[self.room_name]:
+			del ChatConsumer.chats[self.room_name]
+			
+		async_to_sync(self.channel_layer.group_send)(
+			self.room_group_name,
+			{
+				'type': 'chat_message',
+				'message': '@%s left room %s' % (self.user_name, self.room_name),
+			}
+		)
 
 	# Receive message from WebSocket
 	def receive(self, text_data):
 		text_data_json = json.loads(text_data)
 		message = text_data_json['message']
-		username = text_data_json['username']
 		print("receive_message: ", message)
-		print("Sender: ", username)
+		print("Sender: ", self.user_name)
 
 		# Send message to room group
 		async_to_sync(self.channel_layer.group_send)(
 			self.room_group_name,
 			{
 				'type': 'chat_message',
-				'message': message,
-				'username': username
+				'message': self.user_name+': ' + message,
 			}
 		)
 		
 	# Receive message from room group
 	def chat_message(self, event):
 		message = event['message']
-		username = event['username']
 		# Send message to WebSocket
 		self.send(text_data=json.dumps({
-			'message': time.strftime("%H:%M:%S ") + username + ": " + message
+			'message': time.strftime("%H:%M:%S ") + message
 		}))
 '''
 pool = redis.ConnectionPool(
@@ -145,15 +165,14 @@ class PushMessage(WebsocketConsumer):
 			self.room_group_name,
 			self.channel_name
 		)
-		
 	
 	def push_message(self, event):
 		# print(event, type(event))
-		if 'number' in event.keys():
+		if 'user_conn' in event:
 			self.send(text_data=json.dumps(
-				{"number":event["number"]}
+				{"user_conn":event["user_conn"]}
 			))
-		elif 'message' in event.keys():
+		elif 'message' in event:
 			msg = time.strftime("%H:%M:%S ") + event["message"]
 			self.send(text_data=json.dumps(
 			{"message":msg} 
