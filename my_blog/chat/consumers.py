@@ -16,10 +16,12 @@ class ChatConsumer(WebsocketConsumer):
 			self.room_group_name,
 			self.channel_name
 		)
-		try:
-			ChatConsumer.chats[self.room_name].add(self)
-		except:
+		if not ChatConsumer.chats[self.room_name]:
 			ChatConsumer.chats[self.room_name] = set([self])
+		else:
+			ChatConsumer.chats[self.room_name].add(self)
+#		except:
+#			ChatConsumer.chats[self.room_name] = set([self])
 		print(ChatConsumer.chats)
 		self.accept()
 		
