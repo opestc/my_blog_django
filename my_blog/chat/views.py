@@ -39,8 +39,6 @@ def pushRedis(request):
 		if key == room:
 			for num in value.values():
 				user_number += num
-	print(room)
-	print(consumers.ChatConsumer.chats[room])
 	user_conn = len(consumers.ChatConsumer.chats[room])
 	
 
@@ -51,6 +49,8 @@ def pushRedis(request):
 		users[room][user] -= 1
 		if users[room][user] <= 0:
 			del users[room][user]
+		if not users[room]:
+			del users[room]
 
 	def push():
 		channel_layer = get_channel_layer()

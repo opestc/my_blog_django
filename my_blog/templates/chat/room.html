@@ -10,7 +10,8 @@
 		{{ room_name|json_script:"room-name" }}
 		{{ user_name|json_script:"user-name" }}
 		<script>
-
+			let ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+			
 			$('#connections').click(function () {
 				$.ajax({
 					url: "{% url 'push' %}",
@@ -39,14 +40,14 @@
 			const roomName = JSON.parse(document.getElementById('room-name').textContent);
 			
 			const chatSocket = new WebSocket(
-				'ws://'
+				ws_scheme + '://'
 				+ window.location.host
 				+ '/ws/chat/'
 				+ roomName
 				+ '/'
 			);
 			let chatSocketh = new WebSocket(
-				'ws://'
+				ws_scheme + '://'
 				+ window.location.host
 				+ '/ws/push/'
 				+ roomName

@@ -11,8 +11,6 @@ class ChatConsumer(WebsocketConsumer):
 	def connect(self):
 		self.room_name = self.scope['url_route']['kwargs']['room_name']
 		self.room_group_name = 'chat_%s' % self.room_name
-		self.user = self.scope["user"]
-
 		# Join room group
 		async_to_sync(self.channel_layer.group_add)(
 			self.room_group_name,
@@ -22,7 +20,7 @@ class ChatConsumer(WebsocketConsumer):
 			ChatConsumer.chats[self.room_name].add(self)
 		except:
 			ChatConsumer.chats[self.room_name] = set([self])
-		
+		print(ChatConsumer.chats)
 		self.accept()
 		
 	def disconnect(self, close_code):
@@ -32,6 +30,7 @@ class ChatConsumer(WebsocketConsumer):
 			self.channel_name
 		)
 		ChatConsumer.chats[self.room_name].remove(self)
+		self.close()
 
 	# Receive message from WebSocket
 	def receive(self, text_data):
@@ -158,3 +157,21 @@ class PushMessage(WebsocketConsumer):
 			{"message":msg} 
 		))
 		
+def send_group_msg(room_name, message):
+	# 从Channels的外部发送消息给Channel
+	"""
+	from assets import consumers
+	consumers.send_group_msg('ITNest', {'content': '这台机器硬盘故障了', 'level': 1})
+	consumers.send_group_msg('ITNest', {'content': '正在安装系统', 'level': 2})
+	:param room_name:
+	:param message:
+	:return:
+	"""
+	channel_layer = get_channel_layer()
+	async_to_sync(channel_layer.group_send)(
+		'notice_{}'.format(room_name),  # 构造Channels组名称
+		{
+			"type": "system_message",
+			"message": message,
+		}
+	)
