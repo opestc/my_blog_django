@@ -39,15 +39,19 @@ def pushRedis(request):
 		if key == room:
 			for num in value.values():
 				user_number += num
+	print(room)
+	print(consumers.ChatConsumer.chats[room])
 	user_conn = len(consumers.ChatConsumer.chats[room])
-	# print('room: ' + room + ' user: ' + user + ' connections: ' + str(user_number))
+	
+
+	print('room: ' + room + ' user: ' + user + ' connections: ' + str(user_conn))
 	if request.GET.get("enter") and user_number < user_conn:
 		users[room][user] += 1
 	if request.GET.get("leave"):
 		users[room][user] -= 1
-		if users[room][user] < 0:
-			users[room][user] = 0
-		
+		if users[room][user] <= 0:
+			del users[room][user]
+
 	def push():
 		channel_layer = get_channel_layer()
 		if request.GET.get("number"):

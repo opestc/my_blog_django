@@ -22,7 +22,7 @@ class ChatConsumer(WebsocketConsumer):
 			ChatConsumer.chats[self.room_name].add(self)
 		except:
 			ChatConsumer.chats[self.room_name] = set([self])
-					
+		
 		self.accept()
 		
 	def disconnect(self, close_code):
