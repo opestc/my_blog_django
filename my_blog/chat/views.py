@@ -6,8 +6,10 @@ from article.models import ArticleColumn
 from asgiref.sync import async_to_sync
 from django.views.decorators.http import require_POST,require_GET
 from . import consumers
+
 columns = ArticleColumn.objects.all()
 users = {}
+
 def index(request):
 	if request.method == "POST":
 		chat_entry_form = ChatEntryForm(data=request.POST)
@@ -16,6 +18,16 @@ def index(request):
 			request.session['user_name'] = request.POST['user_name']
 			return redirect('chat:room',room_name=room_name)
 	return render(request, 'chat/index.html', {'columns':columns})
+
+@require_POST
+def chat_enter(request):
+	chat_entry_form = ChatEntryForm(data=request.POST)
+	if chat_entry_form.is_valid():
+		room_name = request.POST['room_name']
+		user_name = request.POST['user_name']
+		request.session['user_name'] = request.POST['user_name']
+		return JsonResponse({"success": True, "room_name": room_name})
+	return JsonResponse({"success": False, "error":"Input is not valid."})
 
 def room(request, room_name):
 	user_name = request.session['user_name']
@@ -28,9 +40,8 @@ def pushRedis(request):
 	user = request.GET.get("user")
 	
 	users = consumers.ChatConsumer.chats[room]
-	user_num, user_conn = len(users), 0
-	for user in users:
-		user_conn += len(users[user])
+	user_num = len(users)
+	user_conn = consumers.ChatConsumer.user_conn
 
 	#print('room: ' + room + ' user: ' + user + ' connections: ' + str(user_conn))
 
@@ -39,7 +50,7 @@ def pushRedis(request):
 		if request.GET.get("user_conn"):
 			async_to_sync(channel_layer.group_send) (
 				room,
-				{"type": "push.message", "user_conn": user_conn, "room_name": room}
+				{"type": "push.message", "user_conn": user_conn, "users":list(users)}
 			)
 		else:
 			async_to_sync(channel_layer.group_send) (

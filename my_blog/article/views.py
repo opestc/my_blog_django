@@ -261,7 +261,7 @@ def event(request, event_id=None):
       response['description'] = eventObj.description
       
       return HttpResponse(
-        json.dumps(response,indent=4, sort_keys=True, default=str),
+        json.dumps(response,indent=4, sort_keys=True, default=str), # change datetime in json type
         content_type="application/json"
       )
   if request.method == 'GET' :

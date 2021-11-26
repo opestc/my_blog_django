@@ -8,6 +8,7 @@ import redis
 
 class ChatConsumer(WebsocketConsumer):
 	chats = dict()
+	user_conn = 0
 	def connect(self):
 		self.room_name = self.scope['url_route']['kwargs']['room_name']
 		self.room_group_name = 'chat_%s' % self.room_name
@@ -19,20 +20,21 @@ class ChatConsumer(WebsocketConsumer):
 		)
 		if self.room_name not in ChatConsumer.chats:
 			ChatConsumer.chats[self.room_name]={}
-		if self.user_name not in ChatConsumer.chats[self.room_name]:	
-			ChatConsumer.chats[self.room_name][self.user_name] = 0
+
 		try:
 			ChatConsumer.chats[self.room_name][self.user_name].add(self)
 		except:
 			ChatConsumer.chats[self.room_name][self.user_name] = set([self])
-			
+		ChatConsumer.user_conn += 1	
 #		print(ChatConsumer.chats)
 		self.accept()
 		async_to_sync(self.channel_layer.group_send)(
 			self.room_group_name,
 			{
 				'type': 'chat_message',
-				'message': '@%s joined room %s' % (self.user_name, self.room_name),
+				'message': '@%s joined the group' % (self.user_name),
+				'user_conn': ChatConsumer.user_conn,
+				'users': list(ChatConsumer.chats[self.room_name]),
 			}
 		)
 		
@@ -48,14 +50,17 @@ class ChatConsumer(WebsocketConsumer):
 			del ChatConsumer.chats[self.room_name][self.user_name]
 		if not ChatConsumer.chats[self.room_name]:
 			del ChatConsumer.chats[self.room_name]
-			
+		ChatConsumer.user_conn -= 1		
 		async_to_sync(self.channel_layer.group_send)(
 			self.room_group_name,
 			{
 				'type': 'chat_message',
-				'message': '@%s left room %s' % (self.user_name, self.room_name),
+				'message': '@%s left the group' % (self.user_name),
+				'user_conn': ChatConsumer.user_conn,
+				'users': list(ChatConsumer.chats[self.room_name]),
 			}
 		)
+
 
 	# Receive message from WebSocket
 	def receive(self, text_data):
@@ -77,9 +82,16 @@ class ChatConsumer(WebsocketConsumer):
 	def chat_message(self, event):
 		message = event['message']
 		# Send message to WebSocket
-		self.send(text_data=json.dumps({
-			'message': time.strftime("%H:%M:%S ") + message
-		}))
+		if 'user_conn' in event:
+			self.send(text_data=json.dumps({
+				'message': time.strftime("%H:%M:%S ") + message,
+				'user_conn': event['user_conn'],
+				'users':event['users']
+			}))
+		else:
+			self.send(text_data=json.dumps({
+				'message': time.strftime("%H:%M:%S ") + message
+			}))
 '''
 pool = redis.ConnectionPool(
 	host="127.0.0.1",
@@ -170,7 +182,7 @@ class PushMessage(WebsocketConsumer):
 		# print(event, type(event))
 		if 'user_conn' in event:
 			self.send(text_data=json.dumps(
-				{"user_conn":event["user_conn"]}
+				{"user_conn":event["user_conn"], "users":"<i class='fas fa-user-circle'></i> "+("<br><i class='fas fa-user-circle'></i> ").join(event['users'])}
 			))
 		elif 'message' in event:
 			msg = time.strftime("%H:%M:%S ") + event["message"]

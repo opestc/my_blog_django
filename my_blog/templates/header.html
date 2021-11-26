@@ -1,5 +1,5 @@
 <!-- 定义导航栏 -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-between" style="background-color: #e3f2fd;">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-between">
   <div class="container">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -8,10 +8,13 @@
     <!-- 导航入口 -->
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav">
-
-        {% for column in columns %}
+        {% for col in columns %}
+        {% if col.id|slugify == column %}
+        <li class="nav-item active">
+        {% else %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'article:article_list' %}?column={{ column.id }}">{{ column }}</a>
+        {% endif %}
+          <a class="nav-link" href="{% url 'article:article_list' %}?column={{ col.id }}">{{ col }}</a>
         </li>
         {% endfor %}
       </ul>

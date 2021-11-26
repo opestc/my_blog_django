@@ -3,30 +3,26 @@
 {% load static %}
 {% block title %}Chat Room{% endblock %}
 {% block content %}
-		<textarea id="chat-log" class="col" rows="20"></textarea><br>
-		<input id="chat-message-input" type="text" class="col"><br>
+
+<div class="container" id="chating" style="font-family: BlinkMacSystemFont, sans-serif;">
+	    <div class="row">
+	    <div id="chat-users" class="col-2" style="margin: 0; padding: 5px; text-align: justify; overflow-x: hidden;">
+		</div>
+		<div class="col-10" style="position: relative; border: none;">
+
+		<textarea id="chat-log" rows="20" class="col-12" style="padding: 5px; border: none; outline: none; background-color: transparent;"></textarea><br>
+		<!--<button id="connections">Conn</button>-->
+		<div class="col" style="position: absolute; bottom: 2px; align-self: center;">
+		<input class="col-10" id="chat-message-input" type="text">
 		<input id="chat-message-submit" type="button" value="Send" required>
-		<button id="connections">Conn</button><span id="total"></span>
+		</div>
+		</div>
+		</div>
 		{{ room_name|json_script:"room-name" }}
 		{{ user_name|json_script:"user-name" }}
 		<script>
 			let ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
 			
-			$('#connections').click(function () {
-				$.ajax({
-					url: "{% url 'push' %}",
-					type: "get",
-					data: {
-						"room": "{{ room_name }}",
-						"user": "{{ user_name }}",
-						"user_conn": true,
-						"csrfmiddlewaretoken": "{{ csrf_token }}"
-					},
-					success: function (data) {
-						document.getElementById('total').innerHTML = ' ' + data.total_connection +' connection in total. Active users: ' + data.users;
-					}
-				})
-			})
 			const roomName = JSON.parse(document.getElementById('room-name').textContent);
 			
 			const chatSocket = new WebSocket(
@@ -42,21 +38,50 @@
 				+ '/ws/push/'
 				+ roomName
 			);
+			
+			$('#connections').click(function () {
+				$.ajax({
+					url: "{% url 'push' %}",
+					type: "get",
+					data: {
+						"room": roomName,
+						"user": "{{ user_name }}",
+						"user_conn": true,
+						"csrfmiddlewaretoken": "{{ csrf_token }}"
+					},
+					success: function (data) {
+
+					}
+				})
+			})
+			var d = new Date();
+			chatSocket.onopen = function(e) {
+				document.querySelector('#chat-log').value += ('[' + d.toDateString() +'] Welcome to chat group ' + roomName + '!\n');
+			};
+			
 			// onmessage - An event listener to be called when a message is received from the server.
 			chatSocket.onmessage = function(e) {
 				// JSON.parse() converts the JSON object back into the original object,
 				// then examine and act upon its contents.
 				const data = JSON.parse(e.data);
 				document.querySelector('#chat-log').value += (data.message + '\n');
+				if (data.user_conn) {
+					document.querySelector('#chat-users').innerHTML = '';
+					for (x in data.users) {
+						document.querySelector('#chat-users').innerHTML += "<i class='fas fa-user-circle'></i> " + data.users[x].bold() +'<br>';
+					}
+				}
 			};
 			
 			chatSocketh.onmessage = function(e) {
 				// JSON.parse() converts the JSON object back into the original object,
 				// then examine and act upon its contents.
 				let data = JSON.parse(e.data);
-				if (data.message) {
-					document.querySelector('#chat-log').value += (data.message + '\n');
-				}};
+				document.querySelector('#chat-users').innerHTML = '';
+				for (x in data.users) {
+					document.querySelector('#chat-users').innerHTML += "<i class='fas fa-user-circle'></i> " + data.users[x].bold() +'<br>';
+				}
+			};
 			
 			// onclose - An event listener to be called when the connection is closed.
 			chatSocket.onclose = function(e) {
@@ -72,7 +97,7 @@
 					document.querySelector('#chat-message-submit').click();
 				}
 			};
-
+			
 			document.querySelector('#chat-message-submit').onclick = function(e) {
 				const messageInputDom = document.querySelector('#chat-message-input');
 				const message = messageInputDom.value;
@@ -86,4 +111,5 @@
 				messageInputDom.value = '';
 			};
 		</script>
+</div>
 {% endblock content %}

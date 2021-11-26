@@ -52,8 +52,8 @@
                 <i class="fas fa-search"></i></button>
             </li>&nbsp;
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'chat:index' %}">
-                <i class="fas fa-sms"></i></a>
+              <button type="button" id="ShowChat" class="btn bbtn-link">
+                <i class="fas fa-sms"></i></button>
             </li>&nbsp;
          </ul>
          
@@ -87,7 +87,57 @@
     dialog.on('click', function(){
       dialog.modal('hide');
     })    
-  })
+  });
+
+  $("#ShowChat").click(function () {
+    //console.log(element);
+    $('<div />').load('/chat #chat_form', function(data) {
+    var dialog = bootbox.dialog({
+      title: "Chat Entry",
+      closeButton: true,
+      message: $(this).html(),
+      size: 'large'
+    });
+    var frm = dialog.find('form');
+    dialog.on('shown.bs.modal', function(){
+      frm.on('submit', function(e){
+        e.preventDefault();
+        chat_room();
+      });
+    });
+    function chat_room () {
+      $.ajax({
+        url: "{% url 'chat:enter' %}",
+        type: frm.attr('method'),
+        data: frm.serialize(),
+        headers:{
+          "X-CSRFToken": '{{csrf_token}}'
+        },
+        success: function (res) {
+          console.log(res);
+          if (res.success) {
+//            window.location.replace(
+//            '/chat/'
+//            + res.room_name
+//            + '/');
+            $.ajaxSetup({cache: false });
+            $('<div />').load('/chat/'+res.room_name+' #chating', function(data) {
+              $data= $(data);
+              $data.find("script").appendTo($(this));
+              dialog.find('.modal-title').html('Chat Group ' + res.room_name);
+              dialog.find('.modal-body').html($(this));
+          })
+          }
+          else {
+            bootbox.alert(res.error);
+          }
+        }
+      });
+      return false;
+    };
+      
+  });
+  });
   
   $("#ShowSearchBar").click(function () {
 //    console.log(element);
