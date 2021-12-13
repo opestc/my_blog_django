@@ -10,12 +10,27 @@
 		</div>
 		<div class="col-10" style="position: relative; border: none;">
 
-		<textarea id="chat-log" rows="20" class="col-12" style="padding: 5px; border: none; outline: none; background-color: transparent;"></textarea><br>
+		<textarea id="chat-log" rows="20" class="col-12" style="padding: 5px; border: none; outline: none; background-color: transparent;" readonly></textarea><br>
 		<!--<button id="connections">Conn</button>-->
-		<div class="col" style="position: absolute; bottom: 2px; align-self: center;">
-		<input class="col-10" id="chat-message-input" type="text">
-		<input id="chat-message-submit" type="button" value="Send" required>
+		{% if room_name == 'bot' %}
+		<div class="input-group col" style="position: absolute; bottom: 2px; left: 0; align-self: center;">
+			<select class="custom-select col-3 col-md-2" id="inputGroupSelect">
+				<option value="search" selected>search</option>
+				<option value="add">add</option>
+				<option value="help">help</option>
+			</select>
+			<div class="input-group-append col" style="padding: 0;">
+				<input class="form-control" id="chat-message-input" type="text">
+				<input id="chat-message-submit" type="button" value="Send" style="display: none;" required>
+			</div>
 		</div>
+		{% else %}
+		<div class="col" style="position: absolute; bottom: 2px; left: 0; align-self: center;">
+			<input class="form-control" id="chat-message-input" type="text">
+				
+			<input id="chat-message-submit" type="button" value="Send" style="display: none;" required>
+		</div>
+		{% endif %}	
 		</div>
 		</div>
 		{{ room_name|json_script:"room-name" }}
@@ -57,6 +72,9 @@
 			var d = new Date();
 			chatSocket.onopen = function(e) {
 				document.querySelector('#chat-log').value += ('[' + d.toDateString() +'] Welcome to chat group ' + roomName + '!\n');
+				if (roomName=='bot') {
+					document.querySelector('#chat-log').value += "Pls input 'help' for commands\n";
+				}
 			};
 			
 			// onmessage - An event listener to be called when a message is received from the server.
@@ -100,13 +118,20 @@
 			
 			document.querySelector('#chat-message-submit').onclick = function(e) {
 				const messageInputDom = document.querySelector('#chat-message-input');
-				const message = messageInputDom.value;
-				
+				var message = messageInputDom.value;
+				var preinput = $("#inputGroupSelect option:selected");
+				if (preinput) {
+					message = preinput.val() + ' ' + message;
+				};
+				if (message.startsWith('search clear') && roomName=='bot') {
+					document.querySelector('#chat-log').value = ('[' + d.toDateString() +'] Welcome to chat group ' + roomName + '!\n');
+					document.querySelector('#chat-log').value += "Pls input 'help' for commands\n";
+				}
 				// Send the msg object as a JSON-formatted string.
-				chatSocket.send(JSON.stringify({
+				else {chatSocket.send(JSON.stringify({
 					'message': message
 				}));
-				
+				};
 				// Blank the text input element, ready to receive the next line of text from the user.
 				messageInputDom.value = '';
 			};

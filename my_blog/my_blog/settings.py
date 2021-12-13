@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'password_reset',
     'article',
     'bootstrap4',
+    'mptt',
+    'notifications',
     'users',
     'comment',
     'taggit',
@@ -50,6 +52,7 @@ INSTALLED_APPS = [
     'webpush',
     'channels',
     'chat',
+    'notice',
 ]
 
 MIDDLEWARE = [
@@ -189,22 +192,30 @@ CKEDITOR_CONFIGS = {
     'codesnippet']),
   }
 }
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 ASGI_APPLICATION = "my_blog.asgi.application"
 WSGI_APPLICATION = 'my_blog.wsgi.application'
-CHANNEL_LAYERS = {
-  "default": {
-    "BACKEND": "channels.layers.InMemoryChannelLayer"
-  }
-}
 #CHANNEL_LAYERS = {
 #  "default": {
-#    "BACKEND": "channels_redis.core.RedisChannelLayer",
-#    "CONFIG": {
-#      "hosts": [("127.0.0.1", 6379)],
-#    },
-#  },
+#    "BACKEND": "channels.layers.InMemoryChannelLayer"
+#  }
 #}
+CHANNEL_LAYERS = {
+  "default": {
+    "BACKEND": "channels_redis.core.RedisChannelLayer",
+    "CONFIG": {
+      #"hosts": [("127.0.0.1", 6379)],
+      "hosts": [os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/2')],
+    },
+  },
+}
+CELERY_BROKER_URL = "REDIS://127.0.0.1:6379/0"
+CELERY_TIMEZONE = TIME_ZONE
+
+CELERY_ACCEPT_CONTENT = ['application/json',]
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 #SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # 引擎（默认）
 #SESSION_COOKIE_NAME = "sessionid"  # Session的cookie保存在浏览器上时的key，即：sessionid＝随机字符串（默认）

@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from comment.models import Comment
+from comment.forms import CommentForm
 from django.contrib import messages
 from django.views import generic
 from django.utils.safestring import mark_safe
@@ -21,6 +22,8 @@ import markdown, re, calendar, json, time
 from dateutil import tz
 from django.conf import settings
 from django.http import JsonResponse
+import urllib, string
+
 columns = ArticleColumn.objects.all()
 mytz = tz.gettz('Asia/Shanghai')
 
@@ -117,13 +120,14 @@ def article_detail(request, id):
   #remove blanks
   m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S) 
   toc = m.group(1) if m is not None else ''
-  
+  comment_form = CommentForm()
   context = {
     'article':article, 
     'toc':toc, 
     'comments':comments,
     'columns':columns,
-    'events':events
+    'events':events,
+    'comment_form':comment_form,
   }
   return render(request,'article/detail.html',context)
 
@@ -340,3 +344,18 @@ def message(request):
   user = request.user
   webpush = {"group": 'test' }
   return render(request, 'message.html', {'user': user, 'vapid_key': vapid_key, 'columns':columns})
+
+def chat(request):
+  target = r'http://api.qingyunke.com/api.php?key=free&appid=0&msg='
+  print("=================")
+  keyword = request.POST.get("content")
+  if keyword:
+    tmp = target + keyword
+    url = urllib.parse.quote(tmp, safe=string.printable)
+    page = urllib.request.urlopen(url)
+    
+    html = page.read().decode("utf-8")
+    res = json.loads(html)
+    answer = res['content']
+    return JsonResponse(answer, json_dumps_params={'ensure_ascii':False}, safe=False)
+  return render(request, 'chatbot.html')

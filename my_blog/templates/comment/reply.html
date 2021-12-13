@@ -1,0 +1,56 @@
+{% load bootstrap4 %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta charset="utf-8">
+		{% bootstrap_css %}
+	</head>
+	
+	<body>
+		<form 
+			action="." 
+			method="POST"
+			id="reply_form" 
+		>
+			{% csrf_token %}
+			<div class="form-group">
+				<div id="test">
+					{{ comment_form.media }}
+					{{ comment_form.body }}
+				</div>
+			</div>
+		</form>
+		<!-- 提交按钮 -->
+		<button onclick="confirm_submit({{ article_id }}, {{ parent_comment_id }})" class="btn btn-primary">发送</button>
+		{% bootstrap_javascript %}
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js" integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		
+		<!-- csrf token -->
+		<script src="{% static 'csrf.js' %}"></script>
+		
+		<script>
+			$(function(){
+				$(".django-ckeditor-widget").removeAttr('style');
+			});
+			
+			function confirm_submit(article_id, comment_id){
+				// 从 ckeditor 中取值
+				let content = CKEDITOR.instances['id_body'].getData();
+				// 调用 ajax 与后端交换数据
+				$.ajax({
+					url: '/comment/post-comment/' + article_id + '/' + comment_id,
+					type: 'POST',
+					data: {body: content},
+					// 成功回调
+					success: function(e){
+						if(e === '200 OK'){
+							parent.location.reload();
+						}
+					}
+				})
+			}
+		</script>
+		
+	</body>
+</html>

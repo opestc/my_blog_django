@@ -1,0 +1,56 @@
+{% load bootstrap4 %}
+{% bootstrap_javascript %}
+<div id="chatbot" class="white_content">
+	<a href="javascript:void(0)" onclick="document.getElementById('chatbot').style.display='none';document.getElementById('fade').style.display='none'">
+		Close</a>
+		<div class="talk_con">
+		  <div class="talk_show" id="words">
+			<div class="atalk"><span id="asay">IP[地区]将作为你的ID</span></div>
+			<div class="btalk"><span id="bsay">chatbot: hello!</span></div>
+		  </div>
+		  <div class="talk_input" id="talk_input">
+				<input type="text" class="talk_word" id="talkwords">
+				<input type="button" value="submit" class="talk_sub" id="talksub">
+		</div>
+		</div>
+</div>
+
+<script src="https://pv.sohu.com/cityjson?ie=utf-8"></script>
+<script>
+		window.onload = function () {
+		var Words = document.getElementById("words");
+		var Who = document.getElementById("who");
+		var TalkWords = document.getElementById("talkwords");
+		var TalkSub = document.getElementById("talksub");
+		document.querySelector('#talkwords').onkeyup = function(e) {
+			if (e.keyCode === 13) {  // enter, return
+				document.querySelector('#talksub').click();
+			}
+		};
+
+		TalkSub.onclick = function (e) {
+			var str = '<div class="atalk"><span>' + returnCitySN['cip'] + '[' +returnCitySN['cname'] + ']' + ':' + TalkWords.value + '</span></div>';
+			Words.innerHTML = Words.innerHTML + str;
+			
+			$.ajax({
+				url: "{% url 'article:chatbot' %}",
+				type: 'post',
+				data: {content: $('#talkwords').val()},
+				headers:{
+					"X-CSRFToken": '{{csrf_token}}'
+				},
+				success: function (data) {
+					console.log(data);
+					str = '<div class="btalk"><span> chatbot: ' + data + '</span></div>';
+					Words.innerHTML += str;
+				},
+				error: function (data) {
+					alert(data.status)
+				}
+				
+			});
+			$("talkwords").val("");
+			return false;
+		}
+	};
+</script>

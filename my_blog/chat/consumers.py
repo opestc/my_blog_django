@@ -3,8 +3,23 @@ import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer, AsyncWebsocketConsumer
 import redis
+from . import tasks
 
-
+COMMANDS = {
+	'help': {
+		'help':'命令帮助信息.',
+	},
+	'add': {
+		'args': 2,
+		'help': '计算两数之和, e.g. add 12 34.',
+		'task': 'add'
+	},
+	'search': {
+		'args': 2,
+		'help': '通过名字查找诗人诗文, e.g. search 李白.\n可另加数字参数查看更多内容, e.g. search 李白 2 (数字为页码).\n清空内容请输入 search clear.\n',
+		'task': 'search'
+	},
+}
 
 class ChatConsumer(WebsocketConsumer):
 	chats = dict()
@@ -77,6 +92,26 @@ class ChatConsumer(WebsocketConsumer):
 				'message': self.user_name+': ' + message,
 			}
 		)
+		if self.room_name == 'bot':
+			response_message = "Pls input 'help' for commands."
+			message_parts = message.split()
+			if message_parts:
+				command = message_parts[0].lower()
+				if command == 'help':
+					response_message = '支持的命令有:\n' + '\n'.join([f'{command} - {params["help"]} ' for command, params in COMMANDS.items()])
+				elif command in COMMANDS:
+					if len(message_parts[1:]) > COMMANDS[command]['args'] or len(message_parts)==1:
+						response_message = f'命令`{command}`参数错误，请重新输入.'
+					else:
+						getattr(tasks, COMMANDS[command]['task']).delay(self.channel_name, *message_parts[1:])
+						response_message = f'收到`{message}`任务.'
+			async_to_sync(self.channel_layer.group_send)(
+				self.room_group_name,
+				{
+					'type': 'chat_message',
+					'message': self.room_name+': ' + response_message,
+				}
+			)
 		
 	# Receive message from room group
 	def chat_message(self, event):
