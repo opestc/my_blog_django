@@ -31,6 +31,7 @@ urlpatterns = [
     path('webpush/', include('webpush.urls')),
     path('chat/', include('chat.urls',namespace='chat')),
     path("push", pushRedis, name="push"),
+    path('webssh/', include('webssh.urls',namespace='webssh')),
     path('notice/', include('notice.urls', namespace='notice')),
     #path('chat2/', include(django_private_chat2_urls)),
     #path('sw.js', TemplateView.as_view(template_name='sw.js', content_type='application/x-javascript'))

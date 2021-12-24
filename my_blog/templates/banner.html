@@ -15,7 +15,7 @@
 			{% for v in banner_list %}
 			{% if v.is_active %}
 			<div class="carousel-item active">
-				<a href="{{v.link_url}}">
+				<a href="{{v.link_url}}" target="_blank">
 					<img src="{{ v.pic.url }}" alt="{{v.title}}" class="d-block w-100" />
 				</a>
 			</div>

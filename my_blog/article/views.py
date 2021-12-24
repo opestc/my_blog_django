@@ -311,8 +311,8 @@ def search(request):
       results += f'<span class="badge badge-primary">{article.column}</span>&nbsp;&nbsp;&nbsp;'
     created = str(article.created.replace(microsecond=0))
     t = time.strptime(created, '%Y-%m-%d %H:%M:%S%z')
-    t = time.strftime('%Y-%m-%d %H:%M:%S',t)
-    results += f'<span>posted @ &nbsp;{t}</span>'
+    t = time.strftime('%Y-%m-%d %H:%M',t)
+    results += f'{t}</span>'
     
   return HttpResponse(
       json.dumps({'error_msg':error_msg,'results':results}),

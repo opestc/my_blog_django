@@ -47,11 +47,10 @@
     </nav>
     {% endif %}
 
-    <div class="row mt-2">
+    <div class="row">
         {% for article in articles %}
-        <hr>
         {% if article.avatar %}
-        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 align-self-center mx-auto">
             <img src="{{ article.avatar.url }}" 
                 alt="avatar" 
                 style="max-width:100%; border-radius: 20px"
@@ -59,17 +58,9 @@
         </div>
         {% endif %}
         <!-- 文章内容 -->
-        <div class="col">
-            <!-- 栏目 -->
-            {% if article.column %}
-            <a role="button" href="{% url 'article:article_list' %}?column={{ article.column.id }}" 
-                class="btn btn-sm mb-2 btn-success"
-            >
-                
-                {{ article.column }}
-                
-            </a>
-            {% endif %}
+        <div class="col align-self-center mx-auto">
+            
+
             <!-- 标题 -->
             <h4>
                 <b>
@@ -102,24 +93,30 @@
                 </p>
             </div>
             <!-- 注脚 -->
-            <p>
+            <!-- 栏目 -->
+            {% if article.column %}
+            <span class="badge badge-primary">
+            <a role="button" href="{% url 'article:article_list' %}?column={{ article.column.id }}" style="color:white;"
+            >
+                
+                {{ article.column }}
+                
+            </a>
+            </span>&nbsp;&nbsp;&nbsp;
+            {% endif %}
                 <!-- 附加信息 -->
+                <span style="color: #999999; font-size: 14px;">
                 {% if user.is_authenticated %}
-                <span>
-                    <i class="fas fa-book-reader"></i>
+
+
+                    <i class="far fa-clock"></i>&nbsp;
+                    {{ article.created|date:'Y-m-d' }}&nbsp;&nbsp;&nbsp;
+                {% endif %}
+                    <i class="fas fa-edit"></i>&nbsp;
+                    {{ article.updated|date:'Y-m-d' }}&nbsp;&nbsp;&nbsp;
+                    <i class="fas fa-book-reader"></i>&nbsp;
                     {{ article.total_views }}&nbsp;&nbsp;&nbsp;
                 </span>
-                
-                <span>
-                    <i class="far fa-clock"></i>
-                    {{ article.created|date:'Y-m-d' }}&nbsp;&nbsp;&nbsp;
-                </span>
-                {% endif %}
-                <span>
-                    <i class="fas fa-edit"></i>
-                    {{ article.updated|date:'Y-m-d' }}
-                </span>
-            </p>
 
         </div>
         <hr style="width: 100%;">

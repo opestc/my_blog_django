@@ -4,15 +4,14 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer, AsyncWebsocketConsumer
 import redis
 from . import tasks
-
+from channels.layers import get_channel_layer
+import paramiko
+import threading
+import getpass
+# channel_layer = get_channel_layer()
 COMMANDS = {
 	'help': {
 		'help':'命令帮助信息.',
-	},
-	'add': {
-		'args': 2,
-		'help': '计算两数之和, e.g. add 12 34.',
-		'task': 'add'
 	},
 	'search': {
 		'args': 2,
@@ -20,6 +19,29 @@ COMMANDS = {
 		'task': 'search'
 	},
 }
+
+class MyThread(threading.Thread):
+	def __init__(self, chan):
+		threading.Thread.__init__(self)
+		self.chan = chan
+		
+	def run(self):
+		# while not self.chan.chan.exit_status_ready():
+		while True:
+			# time.sleep(0.1)
+			try:
+				data = self.chan.chan.recv(1024)
+				async_to_sync(self.chan.channel_layer.group_send)(
+					self.chan.room_group_name,
+					{
+						"type": "push.message",
+						"message": data.decode('unicode_escape')
+					},
+				)
+			except Exception as ex:
+				print(str(ex))
+		self.chan.sshclient.close()
+		return False
 
 class ChatConsumer(WebsocketConsumer):
 	chats = dict()
@@ -99,6 +121,7 @@ class ChatConsumer(WebsocketConsumer):
 				command = message_parts[0].lower()
 				if command == 'help':
 					response_message = '支持的命令有:\n' + '\n'.join([f'{command} - {params["help"]} ' for command, params in COMMANDS.items()])
+
 				elif command in COMMANDS:
 					if len(message_parts[1:]) > COMMANDS[command]['args'] or len(message_parts)==1:
 						response_message = f'命令`{command}`参数错误，请重新输入.'
@@ -124,9 +147,15 @@ class ChatConsumer(WebsocketConsumer):
 				'users':event['users']
 			}))
 		else:
-			self.send(text_data=json.dumps({
-				'message': time.strftime("%H:%M:%S ") + message
-			}))
+			try:
+				self.send(text_data=json.dumps({
+					'message': time.strftime("%H:%M:%S ") + message
+				}))
+			# if message is a dict
+			except:
+				self.send(text_data=json.dumps({
+					'message': message
+				}))
 '''
 pool = redis.ConnectionPool(
 	host="127.0.0.1",
@@ -213,33 +242,55 @@ class PushMessage(WebsocketConsumer):
 			self.channel_name
 		)
 	
+	def receive(self, text_data):
+		if text_data == '1':
+			self.sshclient = paramiko.SSHClient()
+			self.sshclient.load_system_host_keys()
+			self.sshclient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+			host = input('Host: ')
+			user = input('User: ')
+			pd = getpass.getpass('Password: ')
+			self.sshclient.connect(host, 22, user, pd, timeout=10)
+			self.chan = self.sshclient.invoke_shell(term='xterm')
+			# self.chan.settimeout(30)
+			t1 = MyThread(self)
+			t1.setDaemon(True)
+			t1.start()
+		else:
+			try:
+				self.chan.send(text_data)
+			except Exception as ex:
+				print(str(ex))
+
+
 	def push_message(self, event):
 		# print(event, type(event))
-		if 'user_conn' in event:
-			self.send(text_data=json.dumps(
-				{"user_conn":event["user_conn"], "users":"<i class='fas fa-user-circle'></i> "+("<br><i class='fas fa-user-circle'></i> ").join(event['users'])}
-			))
-		elif 'message' in event:
-			msg = time.strftime("%H:%M:%S ") + event["message"]
-			self.send(text_data=json.dumps(
-			{"message":msg} 
-		))
+#		if 'user_conn' in event:
+#			self.send(text_data=json.dumps(
+#				{"user_conn":event["user_conn"], "users":"<i class='fas fa-user-circle'></i> "+("<br><i class='fas fa-user-circle'></i> ").join(event['users'])}
+#			))
+#		elif 'message' in event:
+#			msg = time.strftime("%H:%M:%S ") + event["message"]
+#			self.send(text_data=json.dumps(
+#			{"message":msg} 
+#		))
+		self.send(text_data=event['message'])
 		
 def send_group_msg(room_name, message):
 	# 从Channels的外部发送消息给Channel
 	"""
-	from assets import consumers
+	from chat import consumers
 	consumers.send_group_msg('ITNest', {'content': '这台机器硬盘故障了', 'level': 1})
 	consumers.send_group_msg('ITNest', {'content': '正在安装系统', 'level': 2})
 	:param room_name:
 	:param message:
 	:return:
 	"""
-	channel_layer = get_channel_layer()
+
 	async_to_sync(channel_layer.group_send)(
-		'notice_{}'.format(room_name),  # 构造Channels组名称
+		'chat_{}'.format(room_name),  # 构造Channels组名称
 		{
-			"type": "system_message",
+			"type": "chat_message",
 			"message": message,
 		}
 	)

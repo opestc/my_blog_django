@@ -1,0 +1,351 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap4 %}
+{% block title %}远程终端{% endblock %}
+
+{% block css %}
+    <link href="{% static 'plugins/xterm/xterm.css' %}" rel="stylesheet">
+    <link href="{% static 'plugins/toastr/toastr.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox-title">
+                    <h5>在线终端</h5>
+                </div>
+                <div class="ibox float-e-margins" id="id-box">
+                    <div class="ibox-content" id="id-content">
+                        <div class="row">
+                            <form role="form" id="id-form" autocomplete="off">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>远程用户名</label>
+                                        <input type="text" placeholder="User" id="id-user" class="form-control"
+                                               autocomplete="off" value="queeniahu">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>主机地址</label>
+                                        <input type="text" placeholder="Host" id="id-host" class="form-control" required
+                                               autocomplete="off" value="">
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>端口</label>
+                                        <input type="text" placeholder="Port" id="id-port" class="form-control"
+                                               value="22" required autocomplete="off">
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label>认证类型</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <label class="radio-inline">
+                                            <input type="radio" name="auth" id="id-use-pwd" value="pwd" checked> 密码认证
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="auth" id="id-use-key" value="key"> 秘钥认证
+                                        </label>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label id="id-auth-type">登录密码</label>
+                                        <input type="password" placeholder="Pwd" id="id-pwd" class="form-control"
+                                               required autocomplete="off" value="">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 hide" id="id-show-upload">
+                                    <div class="form-group">
+                                        <label>密钥文件</label>
+                                        <input class="filestyle" id="id-key-file" type="file">
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    注意:
+                                    <p style="color: red; font-size: 10px">1、当认证类型为密码认证时, 秘钥文件上传将不可用</p>
+                                    <p style="color: red; font-size: 10px">2、当认证类型为秘钥认证时, 如果密码输入框不为空,
+                                        则密码输入框的内容将作为秘钥的解密密码</p>
+                                    <button class="btn btn-sm btn-info" type="button" onclick="connectWebSocket()">
+                                        <strong>连接</strong>
+                                    </button>
+                                </div>
+                            </form>
+
+                        </div>
+                        <table class="table table-striped" style="display: none;">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>服务器</th>
+                                <th>用途</th>
+                                <th>SSH连接</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>192.168.96.20</td>
+                                <td>PXE服务器</td>
+                                <td>
+                                    <button type="button" class="btn btn-info btn-sm"
+                                            onclick="connectWebSocket(host_id=1)">连接
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm"
+                                            onclick="connectWebSocket(host_id=1, team=true)">协作连接
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>192.168.96.21</td>
+                                <td>Samba服务器：镜像从服务器</td>
+                                <td>
+                                    <button type="button" class="btn btn-info btn-sm"
+                                            onclick="connectWebSocket(host_id=2)">连接
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm"
+                                            onclick="connectWebSocket(host_id=2, team=true)">协作连接
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="ibox-content" id="id-ssh-content" style="padding: 0; display: none;">
+                        <p style="position:absolute; padding: 0; right:0; margin-right:17px; text-align: center; z-index: 999">
+                            <button class="btn btn-danger btn-lg" id="id-close-conn">关闭连接</button>
+                        </p>
+                        <div id="terminal"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+{% endblock content %}
+
+{% block script %}
+    <!--首先引入jquery-->
+    <!-- 图片上传按钮样式 -->
+    <script src="{% static 'js/bootstrap-filestyle.min.js' %}"></script>
+    <script>
+        //上传文件
+        $(":file").filestyle({btnClass: "btn-default", text: "更改"});
+    </script>
+    <script src="{% static 'plugins/xterm/xterm.js' %}"></script>
+    <script src="{% static 'plugins/toastr/toastr.min.js' %}"></script>
+    <script src="{% static 'plugins/zmodem/zmodem.devel.js' %}"></script>
+    <script>
+        toastr.options = { // toastr配置
+            "closeButton": true,
+            "debug": false,
+            "progressBar": true,
+            "positionClass": "toast-top-center",
+            "showDuration": "400",
+            "hideDuration": "1000",
+            "timeOut": "3000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+    </script>
+
+    <script>
+        $("#id-use-pwd").click(function () {
+            $('#id-auth-type').html('登录密码');
+            $('#id-show-upload').addClass('hide')
+        });
+        $("#id-use-key").click(function () {
+            $('#id-auth-type').html('解密密码');
+            $('#id-show-upload').removeClass('hide')
+        })
+    </script>
+
+    <script>
+        function get_box_size() {
+            let init_width = 9;
+            let init_height = 22;
+
+            let windows_width = $('#id-box').width();
+            let windows_height = $(window).height();
+
+            return {
+                cols: Math.floor(windows_width / init_width),
+                rows: Math.floor(windows_height / init_height),
+            }
+        }
+        document.querySelector('#id-pwd').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                connectWebSocket();
+            }
+        };
+
+        function connectWebSocket(host_id = null, team = false) {
+            let cols = get_box_size().cols;
+            let rows = get_box_size().rows;
+            //let user_name = "{{ user_name }}";
+            console.log(cols);
+
+            //根据div的大小初始化终端，待WebSocket连接上后，显示终端
+            let term = new Terminal(
+                {
+                    cols: cols,
+                    rows: rows,
+                    useStyle: true,
+                    cursorBlink: true
+                }
+            );
+
+            //建立WebSocket连接
+            if (host_id === null) {
+                //获取表单中的信息，并去掉两端空格
+                let host = $.trim($('#id-host').val());
+                if (host === '') {
+                    toastr.warning('主机地址不能为空', '提示');
+                    return;
+                }
+                let port = $.trim($('#id-port').val());
+                if (port === '') {
+                    toastr.warning('端口不能为空', '提示');
+                    return;
+                }
+                let user = $.trim($('#id-user').val());
+                if (user === '') {
+                    toastr.warning('用户名不能为空', '提示');
+                    return;
+                }
+                let auth = $("input[name='auth']:checked").val();
+                console.log('选择认证方式：' + auth);
+                let sshkey_filename = '';
+                if (auth === 'key') {
+                    //上传密钥文件
+                    let key_file = $('#id-key-file')[0].files[0];
+                    let csrf = '{{ csrf_token }}';
+                    let formData = new FormData();
+                    formData.append('key_file', key_file);
+                    formData.append('csrfmiddlewaretoken', csrf);
+                    $.ajax({
+                        url: '{% url "webssh:upload_ssh_key" %}',
+                        type: 'post',
+                        data: formData,
+                        async: false,
+                        processData: false,
+                        contentType: false,
+                        mimeType: 'multipart/form-data',
+                        success: function (data) {
+                            sshkey_filename = data;  //返回保存文件的名称
+                        }
+                    });
+                }
+
+                let pwd = $.trim($('#id-pwd').val());
+                pwd = window.btoa(pwd); //加密密码传输
+
+                //组装为ssh连接参数
+                let ssh_args = `user=${user}&host=${host}&port=${port}&auth=${auth}&pwd=${pwd}&sshkey_filename=${sshkey_filename}`;
+                //console.log(ssh_args);
+
+
+                let ws_scheme = window.location.protocol === "https:" ? "wss" : "ws"; //获取协议
+                let ws_port = (window.location.port) ? (':' + window.location.port) : '';  // 获取端口
+                ws = new WebSocket(ws_scheme + '://' + window.location.hostname  + ws_port + '/ws/webssh/?' + ssh_args + `&width=${cols}&height=${rows}`);
+            } else {
+                //指定服务器id连接
+                if (team) {
+                    let ws_scheme = window.location.protocol === "https:" ? "wss" : "ws"; //获取协议
+                    let ws_port = (window.location.port) ? (':' + window.location.port) : '';  // 获取端口
+                    ws = new WebSocket(ws_scheme + '://' + window.location.hostname  + ws_port + `/ws/webssh/${host_id}/` + `?width=${cols}&height=${rows}&team=${team}`);
+                } else {
+                    let ws_scheme = window.location.protocol === "https:" ? "wss" : "ws"; //获取协议
+                    let ws_port = (window.location.port) ? (':' + window.location.port) : '';  // 获取端口
+                    ws = new WebSocket(ws_scheme + '://' + window.location.hostname + ws_port + `/ws/webssh/${host_id}/` + `?width=${cols}&height=${rows}`);
+                }
+
+            }
+
+            //打开websocket连接，并打开终端
+            ws.onopen = function () {
+                console.log('WebSocket建立连接，打开Web终端');
+                $('#id-content').hide();
+                $('#id-ssh-content').show();
+
+                term.open(document.getElementById('terminal'));
+            };
+            ws.onclose = function (e) {
+                console.error('WebSocket关闭连接，关闭Web终端');
+                toastr.success('SSH连接已关闭', '消息');
+                //term.write(message);
+                setTimeout(function () {
+                    window.location.reload();
+                }, 3000);
+            };
+
+            //读取服务器发送的数据并写入web终端
+            ws.onmessage = function (e) {
+                console.log('WebSocket接收消息，ssh交互中');
+                let data = JSON.parse(e.data);
+                console.log(data);
+                let message = data['message'];
+                if (data.flag === 'msg') {
+                    term.write(message);
+                } else if (data.flag === 'fail') {
+                    term.write(message);  //连接ssh的异常提示
+                    toastr.error(message + "返回登录页", '失败');
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 5000);
+                } else if (data.flag === 'user') {
+                    toastr.info(message, '消息');
+                } else if (data.flag === 'error') {
+                    toastr.error(message, '失败');
+                    //term.write(message);
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 5000);
+
+                }
+
+            };
+
+            //向服务器发送数据,flag=1
+            term.onData(function (data) {
+                //data为每个按键输入内容，例如按A，就传递给后端：{'flag': 1, 'data': 'a', 'cols': None, 'rows': None}
+                let send_data = JSON.stringify({
+                    'flag': 'entered_key',
+                    'entered_key': data,
+                    'cols': null,
+                    'rows': null
+                });
+                //向WebSocket发送消息，也就是输入的每一个按键
+                ws.send(send_data)
+            });
+
+            //终端右上角显示的关闭连接安装，当点击是，关闭ws
+            $('#id-close-conn').click(function () {
+                ws.close();
+            });
+
+            // 监听浏览器窗口, 根据浏览器窗口大小修改终端大小
+            $(window).resize(function () {
+                let cols = get_box_size().cols;
+                let rows = get_box_size().rows;
+                console.log(`更改显示终端窗口大小，行${rows}列${cols}`);
+                let send_data = JSON.stringify({'flag': 'resize', 'cols': cols, 'rows': rows});
+                ws.send(send_data);
+                term.resize(cols, rows) //调整页面终端大小
+            })
+        }
+    </script>
+{% endblock script %}

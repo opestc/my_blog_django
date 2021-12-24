@@ -15,7 +15,9 @@ def index(request):
 		chat_entry_form = ChatEntryForm(data=request.POST)
 		if chat_entry_form.is_valid():
 			room_name = request.POST['room_name']
-			request.session['user_name'] = request.POST['user_name']
+			request.session['user_name']=request.POST['user_name']
+			if room_name == 'ssh':
+				return redirect('webssh:index')
 			return redirect('chat:room',room_name=room_name)
 	return render(request, 'chat/index.html', {'columns':columns})
 

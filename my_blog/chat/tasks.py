@@ -9,13 +9,6 @@ channel_layer = get_channel_layer()
 
 
 @shared_task
-def add(channel_name, x, y):
-	message = '{}+{}={}'.format(x, y, int(x) + int(y))
-	async_to_sync(channel_layer.send)(channel_name, {"type": "chat.message", "message": message})
-	print(message)
-	
-	
-@shared_task
 def search(channel_name, name, page=1):
 	spider = PoemSpider(name, page)
 	result = spider.parse_page()

@@ -50,11 +50,15 @@
             <li class="nav-item">
               <button type="button" id="ShowSearchBar" class="btn bbtn-link">
                 <i class="fas fa-search"></i></button>
-            </li>&nbsp;
+            </li>
             <li class="nav-item">
               <button type="button" id="ShowChat" class="btn bbtn-link">
                 <i class="fas fa-sms"></i></button>
-            </li>&nbsp;
+            </li>
+            <li class="nav-item">
+              <button type="button" id="ShowWebSSH" class="btn bbtn-link">
+                <i class="fad fa-terminal"></i></button>
+            </li>
          </ul>
          
           <span style="font-size: 14px; color: grey; display: inline-block; float: none;text-align: right;">
@@ -139,6 +143,41 @@
   });
   });
   
+  $("#ShowWebSSH").click(function () {
+    //console.log(element);
+    $('<div />').load('/webssh #id-box', function(data) {
+      $data = $(data);
+      $data.find("script").appendTo($(this));
+      //console.log($(this).html());
+      var dialog = bootbox.dialog({
+        title: "Web SSH",
+        closeButton: true,
+        message: $(this),
+        size: 'large'
+      });
+      var btn = dialog.find('button .btn');
+      dialog.on('shown.bs.modal', function(){
+        btn.on('click', function(e){
+          e.preventDefault();
+          web_ssh();
+        });
+      });
+      function web_ssh () {
+        console.log('another modal');
+        $('<div />').load('/webssh #id-box', function(data) {
+          $data = $(data);
+          $data.find("script").appendTo($(this));
+          var dialog = bootbox.dialog({
+            title: "Web SSH",
+            closeButton: true,
+            message: $(this),
+            size: 'large'
+          });
+    })
+  };
+});
+})
+  
   $("#ShowSearchBar").click(function () {
 //    console.log(element);
 //    var frm = $('#search');
@@ -160,13 +199,11 @@
     var bar = dialog.find('input');
     dialog.on('shown.bs.modal', function(){
       bar.focus();
-      console.log("Waiting");
+      //console.log("Waiting");
       //console.log(searchBar);
       frm2.on('submit', function(e){
-        console.log("submitted");
         e.preventDefault();
         search_results();
-        console.log('done');
       });
     });
     function search_results () {
@@ -191,10 +228,8 @@
 
         frm2 = dialog.find('form');
         frm2.on('submit', function(e){
-          console.log("submitted");
           e.preventDefault();
           search_results();
-          console.log('done');
         });
 
       },
